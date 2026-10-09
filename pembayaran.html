@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.payment-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}.payment-table{width:100%;border-collapse:collapse;min-width:1050px}.payment-table th,.payment-table td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;white-space:nowrap}.payment-table th{background:#f8fafc;font-size:12px}.payment-table td{font-size:12px}.payment-status{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700}.payment-paid{background:#dcfce7;color:#166534}.payment-unpaid{background:#fef3c7;color:#92400e}.payment-actions{display:flex;gap:6px}.payment-actions .btn-primary{color:#000 !important;font-weight:700}.payment-modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:3000}.payment-modal.show{display:flex}.payment-box{width:min(620px,100%);background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:22px}.payment-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.payment-head h2{margin:0;font-size:19px}.payment-close{border:0;background:transparent;font-size:26px;cursor:pointer}.payment-info{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}.info-card{border:1px solid #e5e7eb;border-radius:8px;padding:9px}.info-label{font-size:10px;color:#6b7280}.info-value{font-size:13px;font-weight:700;margin-top:3px}.payment-group{margin-bottom:13px}.payment-group label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.payment-group input,.payment-group textarea{width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #d1d5db;border-radius:7px;background:#fff;font:inherit}.payment-group textarea{min-height:110px;resize:vertical}.payment-actions-bottom{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.payment-empty{text-align:center;color:#6b7280;padding:30px!important}@media(max-width:700px){.payment-info{grid-template-columns:1fr}}
+</style>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+<body>
+<div class="app">
+<div id="sidebar-container"></div>
+<main class="main">
+<header class="topbar"><button type="button" class="sidebar-toggle" onclick="toggleSidebar()" title="Buka/Tutup Menu">☰</button><div class="topbar-title"><div class="page-title">Pembayaran</div><div class="page-description">Daftar WO yang sudah dibuat Tagihan Kuitansi</div></div><div class="topbar-right"><div class="date-display" id="currentDate">-</div></div></header>
+<section class="content">
+<div class="toolbar"><div><input id="searchPayment" type="search" placeholder="Cari No. Kuitansi / WO / No. Klaim / Customer / No. Polisi / Asuransi"></div></div>
+<div class="panel payment-panel"><div class="panel-header"><div><h2>Daftar Pembayaran</h2><span>WO yang sudah memiliki Tagihan Kuitansi</span></div></div><div style="overflow:auto"><table class="payment-table"><thead><tr><th>No</th><th>No. Kuitansi</th><th>No. WO</th><th>No. Klaim</th><th>Customer</th><th>No. Polisi</th><th>Asuransi</th><th>Grand Total</th><th>Status Pembayaran</th><th>Tanggal Bayar</th><th>Keterangan</th><th>Aksi</th></tr></thead><tbody id="paymentTableBody"></tbody></table></div></div>
+</section></main></div>
+<div class="payment-modal" id="paymentModal"><div class="payment-box"><div class="payment-head"><h2>Pembayaran</h2><button class="payment-close" type="button" onclick="closePaymentModal()">×</button></div><div class="payment-info"><div class="info-card"><div class="info-label">No. Kuitansi</div><div class="info-value" id="payKuitansi">-</div></div><div class="info-card"><div class="info-label">No. WO</div><div class="info-value" id="payWO">-</div></div><div class="info-card"><div class="info-label">No. Klaim</div><div class="info-value" id="payClaim">-</div></div><div class="info-card"><div class="info-label">Customer</div><div class="info-value" id="payCustomer">-</div></div><div class="info-card"><div class="info-label">Alias Asuransi</div><div class="info-value" id="payInsurerAlias">-</div></div><div class="info-card"><div class="info-label">Nilai Kuitansi</div><div class="info-value" id="payAmount">Rp 0</div></div></div><form id="paymentForm"><div class="payment-group"><label for="paidAt">Tanggal Bayar *</label><input id="paidAt" type="date" required></div><div class="payment-group"><label for="paymentDescription">Keterangan</label><textarea id="paymentDescription" placeholder="Isi keterangan pembayaran..."></textarea></div><div class="payment-actions-bottom"><button type="button" class="btn-secondary" onclick="closePaymentModal()">Batal</button><button type="submit" class="btn-primary">Simpan Pembayaran</button></div></form></div></div>
+<script src="layout.js"></script>
+<script src="pembayaran.js"></script>
+</body>
+</html>

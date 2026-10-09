@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MyWorkshop</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+
+<style id="myworkshop-main-menu-fallback">
+.menu-section.main-menu-toggle{
+    display:flex !important;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+}
+.main-menu-arrow{font-size:12px;opacity:.75}
+.menu-section.main-menu-toggle[aria-expanded="true"] .main-menu-arrow{transform:rotate(90deg)}
+.menu-item.menu-hidden-by-main-menu{display:none !important}
+
+.dashboard-wo-timeliness-panel{grid-column:auto;min-width:0}
+.wo-timeliness-content{display:flex;align-items:center;justify-content:center;gap:34px;padding:12px 8px 8px}
+.wo-timeliness-chart-wrap{display:flex;align-items:center;justify-content:center;min-width:210px}
+.wo-timeliness-chart{position:relative;width:170px;height:170px;border-radius:50%;background:conic-gradient(#16a34a 0deg 0deg,#ef4444 0deg 360deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(15,23,42,.08);transition:transform .18s ease,box-shadow .18s ease}
+.wo-timeliness-chart:hover{transform:scale(1.04);box-shadow:0 8px 20px rgba(15,23,42,.12)}
+.wo-timeliness-chart::after{content:"";position:absolute;width:104px;height:104px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1px #eef2f7}
+.wo-timeliness-chart-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.wo-timeliness-chart-center strong{font-size:25px;line-height:1;color:#1f2937}
+.wo-timeliness-chart-center span{margin-top:5px;font-size:10px;color:#64748b}
+.wo-timeliness-legend{min-width:220px;display:flex;flex-direction:column;gap:14px}
+.wo-timeliness-legend-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #eef2f7;border-radius:9px;background:#fafbfc}
+.wo-timeliness-dot{width:12px;height:12px;border-radius:50%;flex:0 0 12px}
+.wo-timeliness-dot.timely{background:#16a34a}.wo-timeliness-dot.late{background:#ef4444}
+.wo-timeliness-legend-item div{display:flex;flex-direction:column;gap:3px}
+.wo-timeliness-legend-item strong{font-size:12px;color:#334155}.wo-timeliness-legend-item span{font-size:10px;color:#64748b}
+.wo-timeliness-legend-item b{font-weight:700;color:#1f2937}
+@media(max-width:900px){.dashboard-wo-timeliness-panel{grid-column:1 / -1}.wo-timeliness-content{flex-direction:column;gap:18px}.wo-timeliness-legend{width:100%;min-width:0}.wo-timeliness-chart-wrap{min-width:0}}
+</style>
+
+
+<style id="myworkshop-billing-summary">
+.dashboard-billing-summary-panel{grid-column:1 / -1;min-width:0}
+.billing-carousel{position:relative;padding:10px 12px 4px}
+.billing-carousel-viewport{overflow:hidden;border:1px solid #e5e7eb;border-radius:10px;background:#fff;touch-action:pan-y pinch-zoom}
+.billing-carousel-track{display:flex;width:300%;transition:transform .3s ease;will-change:transform}
+.billing-slide{width:33.333333%;flex:0 0 33.333333%;box-sizing:border-box;padding:8px 12px 10px}
+.billing-slide-title{text-align:center;font-size:13px;font-weight:700;color:#334155;margin:0 0 4px}
+.billing-slide-subtitle{text-align:center;font-size:10px;color:#64748b;margin:0 0 8px}
+.billing-bar-chart-grid{height:280px;display:flex;align-items:flex-end;gap:12px;border-bottom:1px solid #e5e7eb;padding:0 12px;box-sizing:border-box}
+.billing-month-group{height:100%;min-width:66px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.billing-month-bars{height:235px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:5px}
+.billing-bar-track{height:205px;width:25px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.billing-bar-fill{width:21px;min-height:0;border-radius:5px 5px 0 0;background:#2563eb;transition:height .35s ease}
+.billing-bar-fill.tagihan{background:#16a34a}
+.billing-bar-fill.paid{background:#2563eb}
+.billing-bar-fill.unpaid{background:#f59e0b}
+.billing-value-tooltip{position:fixed;z-index:99999;display:none;pointer-events:none;min-width:150px;max-width:240px;padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.16);color:#1f2937;text-align:left;line-height:1.35;font-size:11px;}
+.billing-value-tooltip.show{display:block;}
+.billing-value-tooltip-title{font-size:10px;color:#64748b;margin-bottom:3px;}
+.billing-value-tooltip-label{font-size:11px;font-weight:700;color:#334155;margin-bottom:2px;}
+.billing-value-tooltip-value{font-size:14px;font-weight:800;color:#111827;white-space:nowrap;}
+.billing-bar-fill{cursor:pointer;}
+
+.billing-month-label{font-size:10px;color:#475569;font-weight:600;text-align:center;margin-top:8px;white-space:nowrap}
+.billing-month-value{font-size:9px;color:#1f2937;font-weight:600;white-space:nowrap;margin-bottom:3px;max-width:92px;overflow:hidden;text-overflow:ellipsis}
+.billing-chart-legend{display:flex;justify-content:center;gap:20px;padding:10px 4px 4px;font-size:11px;color:#475569;flex-wrap:wrap}
+.billing-chart-legend-item{display:flex;align-items:center;gap:6px}
+.billing-chart-legend-dot{width:10px;height:10px;border-radius:3px;background:#2563eb}
+.billing-chart-legend-dot.tagihan{background:#16a34a}
+.billing-chart-legend-dot.paid{background:#2563eb}
+.billing-chart-legend-dot.unpaid{background:#f59e0b}
+.billing-carousel-controls{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:8px}
+.billing-carousel-button{border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:7px;min-width:34px;height:30px;cursor:pointer;font-weight:700}
+.billing-carousel-button:hover{background:#f8fafc}
+.billing-carousel-button:disabled{opacity:.45;cursor:default}
+.billing-carousel-indicator{font-size:11px;color:#64748b;min-width:105px;text-align:center}
+@media(max-width:600px){.billing-slide{padding-left:6px;padding-right:6px}.billing-bar-chart-grid{gap:5px;padding:0 4px}.billing-month-group{min-width:0}.billing-month-bars{gap:2px}.billing-bar-track{width:22px}.billing-bar-fill{width:18px}.billing-month-value{font-size:8px;max-width:64px}.billing-month-label{font-size:9px}}
+</style>
+
+<style id="myworkshop-wo-status-flow">
+.dashboard-wo-status-panel{grid-column:1;min-width:0}
+.dashboard-wo-timeliness-panel{grid-column:1;min-width:0}
+.dashboard-wo-status-flow-panel{grid-column:1 / -1;min-width:0;margin-bottom:0}
+.wo-status-flow{display:flex;align-items:stretch;gap:6px;overflow-x:auto;padding:12px 2px 10px;scrollbar-width:thin}
+.wo-status-step{min-width:92px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:5px;cursor:pointer}
+.wo-status-icon{width:48px;height:48px;border:1px solid #e5e7eb;border-radius:50%;background:#f8fafc;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 1px 2px rgba(15,23,42,.05);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.wo-status-step:hover .wo-status-icon{transform:scale(1.22);box-shadow:0 8px 18px rgba(15,23,42,.14);border-color:#cbd5e1}
+.wo-status-step strong{font-size:10px;line-height:1.2;color:#334155;white-space:nowrap}
+.wo-status-step span{font-size:10px;color:#64748b;white-space:nowrap}
+.wo-status-line{height:2px;min-width:20px;flex:0 0 28px;background:#e5e7eb;margin-top:24px}
+.wo-status-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;border-top:1px solid #eef2f7;padding-top:12px}
+.wo-status-summary>div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid #eef2f7;border-radius:8px;background:#fafbfc}
+.wo-status-summary span{font-size:10px;color:#64748b}
+.wo-status-summary strong{font-size:14px;color:#1f2937}
+@media(max-width:900px){.dashboard-wo-status-panel,.dashboard-wo-timeliness-panel{grid-column:1 / -1}.wo-status-flow{justify-content:flex-start}.wo-status-step{flex:0 0 92px}.wo-status-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.dashboard-checkin-again-panel{grid-column:2;min-width:0}
+.checkin-again-count{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #dbeafe;border-radius:8px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:700;white-space:nowrap}
+.checkin-again-live{position:relative;min-height:122px;margin-top:8px;overflow:hidden;border-top:1px solid #eef2f7}
+.checkin-again-card{position:absolute;inset:12px 0 0;display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;align-items:center;padding:12px;border:1px solid #dbeafe;border-radius:9px;background:#f8fbff;box-sizing:border-box;transition:transform .45s ease,opacity .45s ease}
+.checkin-again-card-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eff6ff;border:1px solid #dbeafe;font-size:21px}
+.checkin-again-card-body{min-width:0}
+.checkin-again-card-title{font-size:12px;font-weight:700;color:#1f2937;margin-bottom:7px}
+.checkin-again-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}
+.checkin-again-field{min-width:0}
+.checkin-again-field label{display:block;font-size:9px;color:#94a3b8;margin-bottom:2px}
+.checkin-again-field span{display:block;font-size:10px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.checkin-again-field.note{grid-column:1 / -1}
+.checkin-again-empty{height:100%;min-height:104px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:11px;text-align:center}
+.checkin-again-dots{display:flex;justify-content:center;gap:5px;margin-top:5px}
+.checkin-again-dot{width:6px;height:6px;border-radius:50%;background:#cbd5e1;transition:transform .2s ease,background .2s ease}
+.checkin-again-dot.active{background:#2563eb;transform:scale(1.25)}
+.checkin-again-card.leaving{transform:translateY(-115%);opacity:0}
+.checkin-again-card.entering{transform:translateY(115%);opacity:0}
+@media(max-width:900px){.dashboard-checkin-again-panel{grid-column:1 / -1}}
+
+</style>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+
+<style id="myworkshop-dashboard-welcome-modern">
+.dashboard-welcome-modern{position:relative;min-height:128px;padding:22px 24px;margin-bottom:20px;border:1px solid rgba(37,99,235,.18);border-radius:16px;overflow:hidden;background:linear-gradient(115deg,#071a3b 0%,#172d63 52%,#312e72 100%);box-shadow:0 8px 20px rgba(15,23,42,.18);color:#fff}
+.dashboard-welcome-modern::before{content:"";position:absolute;width:280px;height:280px;right:140px;top:-190px;border-radius:50%;background:rgba(255,255,255,.045);pointer-events:none}
+.dashboard-welcome-copy{position:relative;z-index:1;min-width:0;padding-right:20px}
+.dashboard-welcome-badge{display:inline-flex;align-items:center;min-height:22px;padding:3px 9px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.08);color:#dbeafe;font-size:9px;font-weight:800;letter-spacing:.65px}
+.dashboard-welcome-modern h1{margin:8px 0 5px;color:#fff;font-size:20px;line-height:1.2;letter-spacing:-.2px}
+.dashboard-welcome-modern p{max-width:670px;margin:0;color:#dbeafe;font-size:11px;line-height:1.55}
+.dashboard-live-clock{position:relative;z-index:1;flex:0 0 205px;min-height:74px;padding:11px 42px 10px 14px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(5,15,45,.34);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);display:flex;flex-direction:column;justify-content:center}
+.dashboard-live-clock-value{color:#67d7ff;font-size:18px;font-weight:800;letter-spacing:1px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dashboard-live-clock-date{margin-top:4px;color:#cbd5e1;font-size:9px;white-space:nowrap;text-transform:capitalize}
+.dashboard-clock-refresh{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:31px;height:31px;border:1px solid rgba(255,255,255,.24);border-radius:8px;background:rgba(255,255,255,.1);color:#e0f2fe;font-size:17px;line-height:1;cursor:pointer}
+.dashboard-clock-refresh:hover{background:rgba(255,255,255,.17)}
+@media(max-width:700px){.dashboard-welcome-modern{padding:18px;gap:14px;align-items:flex-start;flex-direction:column}.dashboard-welcome-copy{padding-right:0}.dashboard-live-clock{width:100%;flex-basis:auto;box-sizing:border-box}}
+</style>
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- SIDEBAR -->
+
+    <div id="sidebar-container"></div>
+<!-- MAIN -->
+
+    <main class="main">
+
+
+        <header class="topbar">
+
+            <button
+                class="sidebar-toggle"
+                onclick="toggleSidebar()"
+                type="button"
+                title="Buka/Tutup Menu"
+            >
+                ☰
+            </button>
+
+
+            <div class="topbar-title" id="dashboardWorkshopTopbarIdentity" style="display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;">
+
+                <div id="dashboardWorkshopLogoWrap" style="display:none;flex:0 0 44px;width:44px;height:44px;align-items:center;justify-content:center;overflow:hidden;">
+                    <img id="dashboardWorkshopLogo" alt="Logo Bengkel" style="width:44px;height:44px;object-fit:contain;display:block;">
+                </div>
+
+                <div id="dashboardWorkshopTextWrap" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;align-self:center;min-width:0;text-align:left;line-height:1.25;">
+                    <div class="page-title" id="dashboardWorkshopName" style="margin:0;padding:0;text-align:left;line-height:1.25;">
+                        MyWorkshop
+                    </div>
+                    <div class="page-description" id="dashboardWorkshopAddress" style="margin:3px 0 0;padding:0;text-align:left;line-height:1.25;">
+                        Alamat Bengkel
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <div
+                    class="date-display"
+                    id="currentDate"
+                >
+                    -
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+
+            <div class="welcome-card dashboard-welcome-modern" id="dashboardWelcomeCard">
+
+                <div class="dashboard-welcome-copy">
+
+                    <div class="dashboard-welcome-badge" id="dashboardWelcomeBadge">MYWORKSHOP</div>
+
+                    <h1 id="welcomeName">
+                        Selamat Datang, User!
+                    </h1>
+
+                    <p id="dashboardWelcomeMessage">
+                        Selamat datang di MyWorkshop. Pantau performa bengkel, progres unit masuk, Work Order, dan efisiensi operasional secara real-time.
+                    </p>
+
+                </div>
+
+                <div class="dashboard-live-clock" aria-label="Jam berjalan">
+                    <div class="dashboard-live-clock-value" id="dashboardLiveClock">--:--:-- WIB</div>
+                    <div class="dashboard-live-clock-date" id="dashboardLiveDate">-</div>
+                    <button type="button" class="dashboard-clock-refresh" id="dashboardClockRefresh" title="Refresh Dashboard" aria-label="Refresh Dashboard">↻</button>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <div class="panel dashboard-billing-summary-panel" id="dashboardBillingSummaryPanel" style="display:none;">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Ringkasan Nilai Billing</h2>
+                            <span>Ringkasan nilai OR, tagihan kuitansi, dan pembayaran tahun berjalan</span>
+                        </div>
+                    </div>
+                    <div class="billing-carousel" id="dashboardBillingCarousel" aria-label="Ringkasan billing per kategori tahun berjalan">
+                        <div class="billing-carousel-viewport" id="dashboardBillingCarouselViewport">
+                            <div class="billing-carousel-track" id="dashboardBillingCarouselTrack">
+                                <section class="billing-slide" aria-label="Kategori Nilai OR Dibayar">
+                                    <h3 class="billing-slide-title">Nilai Own Risk (OR)</h3>
+                                    <p class="billing-slide-subtitle"></p>
+                                    <div class="billing-bar-chart-grid" id="dashboardBillingORGrid"></div>
+                                    <div class="billing-chart-legend">
+                                        <div class="billing-chart-legend-item"><span class="billing-chart-legend-dot paid"></span>Sudah Dibayar</div>
+                                        <div class="billing-chart-legend-item"><span class="billing-chart-legend-dot unpaid"></span>Belum Dibayar</div>
+                                    </div>
+                                </section>
+                                <section class="billing-slide" aria-label="Kategori Nilai Tagihan Dibuat">
+                                    <h3 class="billing-slide-title">Nilai Tagihan Dibuat</h3>
+                                    <p class="billing-slide-subtitle">Berdasarkan tanggal Tagihan Kuitansi dibuat</p>
+                                    <div class="billing-bar-chart-grid" id="dashboardBillingTagihanGrid"></div>
+                                    <div class="billing-chart-legend"><div class="billing-chart-legend-item"><span class="billing-chart-legend-dot tagihan"></span>Nilai Tagihan Dibuat</div></div>
+                                </section>
+                                <section class="billing-slide" aria-label="Kategori Pembayaran">
+                                    <h3 class="billing-slide-title">Pembayaran</h3>
+                                    <p class="billing-slide-subtitle">Tagihan Kuitansi berdasarkan bulan dibuat</p>
+                                    <div class="billing-payment-filter" style="display:flex;align-items:center;gap:8px;margin:8px 0 10px;">
+                                        <label for="dashboardBillingPaymentInsurerFilter" style="font-size:11px;font-weight:700;color:#475569;white-space:nowrap;">Asuransi</label>
+                                        <select id="dashboardBillingPaymentInsurerFilter" style="min-width:190px;max-width:100%;padding:6px 9px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#334155;font-size:11px;">
+                                            <option value="">Semua Asuransi</option>
+                                        </select>
+                                    </div>
+                                    <div class="billing-bar-chart-grid" id="dashboardBillingPaymentGrid"></div>
+                                    <div class="billing-chart-legend">
+                                        <div class="billing-chart-legend-item"><span class="billing-chart-legend-dot paid"></span>Sudah Dibayar</div>
+                                        <div class="billing-chart-legend-item"><span class="billing-chart-legend-dot unpaid"></span>Belum Dibayar</div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="billing-carousel-controls">
+                            <button type="button" class="billing-carousel-button" id="dashboardBillingPrev" aria-label="Kategori sebelumnya">‹</button>
+                            <div class="billing-carousel-indicator" id="dashboardBillingIndicator">1 / 3 · Nilai OR Dibayar</div>
+                            <button type="button" class="billing-carousel-button" id="dashboardBillingNext" aria-label="Kategori berikutnya">›</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel dashboard-wo-status-flow-panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Status Pekerjaan Work Order</h2>
+                            <span></span>
+                        </div>
+                    </div>
+
+                                        <div class="wo-status-flow" aria-label="Status Pekerjaan Work Order">
+                        <div class="wo-status-step">
+                            <div class="wo-status-icon">🚗</div>
+                            <strong>CHECK IN</strong>
+                            <span id="dashboardStatusCheckIn">0 WO</span>
+                        </div>
+                        <div class="wo-status-line"></div>
+                        <div class="wo-status-step">
+                            <div class="wo-status-icon">🔧</div>
+                            <strong>BONGKAR</strong>
+                            <span id="dashboardStatusBongkar">0 WO</span>
+                        </div>
+                        <div class="wo-status-line"></div>
+                        <div class="wo-status-step">
+                            <div class="wo-status-icon">🛠️</div>
+                            <strong>DEMPUL</strong>
+                            <span id="dashboardStatusDempul">0 WO</span>
+                        </div>
+                        <div class="wo-status-line"></div>
+                        <div class="wo-status-step">
+                            <div class="wo-status-icon">🎨</div>
+                            <strong>CAT</strong>
+                            <span id="dashboardStatusCat">0 WO</span>
+                        </div>
+                        <div class="wo-status-line"></div>
+                        <div class="wo-status-step">
+                            <div class="wo-status-icon">✨</div>
+                            <strong>FINISHING</strong>
+                            <span id="dashboardStatusFinishing">0 WO</span>
+                        </div>
+                        <div class="wo-status-line"></div>
+                        <div class="wo-status-step">
+                            <div class="wo-status-icon">✅</div>
+                            <strong>SELESAI</strong>
+                            <span id="dashboardStatusSelesai">0 WO</span>
+                        </div>
+                        <div class="wo-status-line"></div>
+                        <div class="wo-status-step">
+                            <div class="wo-status-icon">🏁</div>
+                            <strong>CHECK OUT</strong>
+                            <span id="dashboardStatusCheckOut">0 WO</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="panel dashboard-wo-status-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <h2>
+                                Status Work Order
+                            </h2>
+
+                            <span>
+                            </span>
+
+                        </div>
+
+                        <button
+                            class="button-secondary"
+                            onclick="showPage('wo')"
+                        >
+                            Lihat WO
+                        </button>
+
+                    </div>
+
+
+
+
+                    <div class="wo-status-summary">
+                        <div><span>Estimasi Aktif</span><strong id="dashboardEstimasiAktif">0</strong></div>
+                        <div><span>WO Aktif</span><strong id="dashboardWOAktif">0</strong></div>
+                        <div><span>Menunggu Sparepart</span><strong id="dashboardMenungguSparepart">0</strong></div>
+                        <div><span>Total Check Out</span><strong id="dashboardSelesai">0</strong></div>
+                    </div>
+
+                </div>
+
+
+                <div class="panel dashboard-checkin-again-panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Check In Again</h2>
+                            <span></span>
+                        </div>
+                        <div class="checkin-again-count">🔄 <span id="dashboardCheckInAgainCount">0 WO</span></div>
+                    </div>
+
+                    <div id="dashboardCheckInAgainLive" class="checkin-again-live" aria-live="polite">
+                        <div class="checkin-again-empty">Belum ada WO yang melakukan Check In Again.</div>
+                    </div>
+                    <div id="dashboardCheckInAgainDots" class="checkin-again-dots" aria-hidden="true"></div>
+
+                </div>
+
+
+                <div class="panel dashboard-wo-timeliness-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <h2>
+                                Tingkat Pengerjaan WO
+                            </h2>
+
+                            <span>
+                                Perbandingan WO Tepat Waktu dan Terlambat berdasarkan Tanggal Target &amp; Check Out
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="wo-timeliness-content">
+                        <div class="wo-timeliness-chart-wrap">
+                            <div id="dashboardTimelinessChart" class="wo-timeliness-chart" aria-label="Diagram pie tingkat pengerjaan WO">
+                                <div class="wo-timeliness-chart-center">
+                                    <strong id="dashboardTimelinessTotal">0</strong>
+                                    <span>WO Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="wo-timeliness-legend">
+                            <div class="wo-timeliness-legend-item">
+                                <span class="wo-timeliness-dot timely"></span>
+                                <div>
+                                    <strong>Tepat Waktu</strong>
+                                    <span><b id="dashboardTimelyCount">0</b> WO · <b id="dashboardTimelyPercent">0%</b></span>
+                                </div>
+                            </div>
+                            <div class="wo-timeliness-legend-item">
+                                <span class="wo-timeliness-dot late"></span>
+                                <div>
+                                    <strong>Terlambat</strong>
+                                    <span><b id="dashboardLateCount">0</b> WO · <b id="dashboardLatePercent">0%</b></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="panel dashboard-quick-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <h2>
+                                Menu Cepat
+                            </h2>
+
+                            <span>
+                                Akses Transaksi Utama
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="quick-grid">
+
+                        <button
+                            class="quick-button" data-role-group="transaksi"
+                            onclick="showPage('estimasi')"
+                        >
+
+                            <span>💰</span>
+
+                            <strong>
+                                Estimasi
+                            </strong>
+
+                            <small>
+                                Kelola Estimasi
+                            </small>
+
+                        </button>
+
+                        <button
+                            class="quick-button" data-role-group="produksi"
+                            onclick="showPage('wo')"
+                        >
+
+                            <span>📋</span>
+
+                            <strong>
+                                Work Order
+                            </strong>
+
+                            <small>
+                                Kelola Work Order
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            class="quick-button" data-role-group="sparepart"
+                            onclick="window.location.href='permintaan-sparepart.html'">
+
+                            <span>📝</span>
+
+                            <strong>
+                                Permintaan Sparepart
+                            </strong>
+
+                            <small>
+                                Kelola Sparepart Supply Bengkel
+                            </small>
+
+                        </button>
+
+                        <button
+                            class="quick-button" data-role-group="sparepart"
+                            onclick="window.location.href='penerimaan-sparepart-supply.html'">
+
+                            <span>📥</span>
+
+                            <strong>
+                                Penerimaan Sparepart Supply
+                            </strong>
+
+                            <small>
+                                Kelola Penerimaan sparepart supply
+                            </small>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-panel">
+
+                <div class="info-icon">
+                    ℹ
+                </div>
+
+                <div>
+
+                    <strong>
+                        Alur MyWorkshop
+                    </strong>
+
+                    <p>
+                        Kendaraan Masuk →
+                        Estimasi → WO Produksi → Pembayaran → Selesai
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="layout.js"></script>
+<script src="role-access.js?v=20261005-role-guard"></script>
+<script src="dashboard.js?v=20260912-menunggu-sparepart"></script>
+
+
+<script>
+(function(){
+  function setupDashboardRefresh(){
+    const button=document.getElementById("dashboardClockRefresh");
+    if(!button || button.dataset.dashboardRefreshReady==="1") return;
+    button.dataset.dashboardRefreshReady="1";
+    button.addEventListener("click",function(){
+      window.location.reload();
+    });
+  }
+
+  function setupMainSidebar(){
+    const menu=document.querySelector(".sidebar .menu");
+    if(!menu || menu.dataset.mainSidebarReady==="1") return;
+    menu.dataset.mainSidebarReady="1";
+
+    const sections=[...menu.querySelectorAll(".menu-section.main-menu-toggle")];
+
+    sections.forEach(function(section){
+      const children=[];
+      let n=section.nextElementSibling;
+      while(n && !n.classList.contains("menu-section")){
+        if(n.classList.contains("menu-item")) children.push(n);
+        n=n.nextElementSibling;
+      }
+
+      children.forEach(function(item){item.classList.add("menu-hidden-by-main-menu");});
+
+      function toggle(){
+        const open=section.getAttribute("aria-expanded")==="true";
+        sections.forEach(function(other){
+          if(other===section) return;
+          other.setAttribute("aria-expanded","false");
+          let x=other.nextElementSibling;
+          while(x && !x.classList.contains("menu-section")){
+            if(x.classList.contains("menu-item")) x.classList.add("menu-hidden-by-main-menu");
+            x=x.nextElementSibling;
+          }
+        });
+        section.setAttribute("aria-expanded",open?"false":"true");
+        children.forEach(function(item){
+          item.classList.toggle("menu-hidden-by-main-menu",open);
+        });
+      }
+
+      section.addEventListener("click",toggle);
+      section.addEventListener("keydown",function(e){
+        if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();}
+      });
+    });
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",function(){
+      setupMainSidebar();
+      setupDashboardRefresh();
+    });
+  }else{
+    setupMainSidebar();
+    setupDashboardRefresh();
+  }
+})();
+</script>
+
+<div id="dashboardBillingValueTooltip" class="billing-value-tooltip" role="tooltip" aria-hidden="true"></div>
+
+</body>
+
+</html>

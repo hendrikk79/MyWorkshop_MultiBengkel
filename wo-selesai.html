@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.wo-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}
+.wo-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.wo-form-group label{display:block;font-weight:600;margin-bottom:6px}
+.wo-form-group input,.wo-form-group select,.wo-form-group textarea{width:100%;padding:9px 11px;border:1px solid #d1d5db;border-radius:6px;background:#fff}
+.wo-form-group textarea{min-height:80px;resize:vertical}
+.wo-section{margin-top:18px}
+.wo-section h3{margin:0 0 10px;font-size:15px}
+.wo-detail-table{width:100%;border-collapse:collapse}
+.wo-detail-table th,.wo-detail-table td{padding:9px 10px;border-bottom:1px solid #e5e7eb;text-align:left}
+.wo-detail-table th{background:#f8fafc}
+.wo-actions{display:flex;gap:7px;flex-wrap:wrap}.btn-small{padding:6px 9px;font-size:12px}.btn-danger{background:#dc2626;color:#fff;border:1px solid #dc2626;border-radius:6px;padding:7px 10px;cursor:pointer}.btn-danger:hover{background:#b91c1c}.wo-info-item{padding:8px 10px;border:1px solid #eef0f3;border-radius:6px}.wo-label{font-size:12px;color:#6b7280;margin-bottom:3px}
+.wo-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:2000}
+.wo-modal.show{display:flex}
+.wo-modal-box{background:#fff;width:min(1000px,100%);max-height:90vh;overflow:auto;border-radius:10px;padding:22px}
+.wo-modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.wo-modal-head h2{margin:0}
+.wo-close{border:0;background:transparent;font-size:24px;cursor:pointer}
+.wo-empty{text-align:center;color:#6b7280;padding:25px}
+.wo-status{font-weight:700}
+@media(max-width:800px){.wo-info-grid,.wo-form-grid{grid-template-columns:1fr}}
+
+.wo-list-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:20px;overflow:hidden}
+.wo-list-panel .panel-header{padding:20px 20px 0}
+.wo-list-panel>div:last-child{padding:0 20px 20px}
+.wo-estimate-picker{position:relative}
+.wo-estimate-picker input[type="search"]{height:40px;box-sizing:border-box}
+.wo-estimate-results{display:none;position:absolute;z-index:2100;left:0;right:0;top:44px;background:#fff;border:1px solid #d1d5db;border-radius:7px;box-shadow:0 10px 25px rgba(0,0,0,.12);max-height:240px;overflow-y:auto}
+.wo-estimate-results.show{display:block}
+.wo-estimate-result{display:block;width:100%;padding:10px 12px;border:0;border-bottom:1px solid #f1f5f9;background:#fff;text-align:left;cursor:pointer;font-size:12px;color:#111827}
+.wo-estimate-result:last-child{border-bottom:0}
+.wo-estimate-result:hover,.wo-estimate-result.selected{background:#eff6ff}
+.wo-estimate-result strong{display:block;font-size:12px;color:#111827}
+.wo-estimate-result span{display:block;margin-top:3px;font-size:11px;color:#6b7280}
+.wo-estimate-empty{padding:12px;color:#6b7280;font-size:12px;text-align:center}
+.wo-search-help{display:block;margin-top:5px;color:#6b7280;font-size:10px}
+.wo-flow-button{background:#2563eb!important;color:#fff!important;border-color:#2563eb!important}
+.wo-flow-button:hover{background:#1d4ed8!important;border-color:#1d4ed8!important}
+.wo-status-badge{background:#eff6ff;color:#1d4ed8}
+
+.wo-supply-select{width:100%;min-width:120px;padding:7px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff;font-size:12px}
+.wo-print-blank{min-width:90px}
+
+.wo-completed-note{font-size:12px;color:#6b7280;margin-top:5px}
+.wo-history-cycle{border:1px solid #e5e7eb;border-radius:8px;margin-bottom:14px;overflow:hidden}
+.wo-history-cycle-title{padding:11px 14px;background:#f8fafc;font-weight:700;border-bottom:1px solid #e5e7eb}
+.wo-history-timeline{padding:10px 14px 12px}
+.wo-history-row{display:flex;gap:12px;position:relative;padding:7px 0}
+.wo-history-row:not(:last-child)::after{content:"";position:absolute;left:5px;top:20px;bottom:-7px;width:2px;background:#dbeafe}
+.wo-history-dot{width:12px;height:12px;border-radius:50%;background:#2563eb;margin-top:4px;flex:0 0 12px;position:relative;z-index:1}
+.wo-history-content{display:flex;flex-direction:column;gap:2px}
+.wo-history-content strong{font-size:13px}
+.wo-history-content span{font-size:12px;color:#6b7280}
+.wo-history-note{margin-top:4px;padding:7px 9px;background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;font-size:12px;color:#7c2d12}
+.wo-check-again-info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
+.wo-check-again-box{padding:10px;border:1px solid #e5e7eb;border-radius:7px}
+.wo-check-again-label{font-size:11px;color:#6b7280;margin-bottom:3px}
+@media(max-width:700px){.wo-check-again-info{grid-template-columns:1fr}}
+</style>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+<body>
+<div class="app">
+<div id="sidebar-container"></div>
+<main class="main">
+<header class="topbar">
+<button type="button" class="sidebar-toggle" onclick="toggleSidebar()" title="Buka/Tutup Menu">☰</button>
+<div class="topbar-title"><div class="page-title">WO Selesai</div><div class="page-description">Daftar WO yang sudah menyelesaikan proses produksi</div></div>
+<div class="topbar-right"><div class="date-display" id="currentDate">-</div></div>
+</header>
+<section class="content">
+<div class="toolbar">
+<div><input id="searchWO" type="search" placeholder="Cari WO / Estimasi / Customer / No. Polisi"></div>
+</div>
+<div class="panel wo-list-panel">
+<div class="panel-header"><div><h2>Daftar WO Selesai</h2><span class="wo-completed-note">Daftar WO yang sudah CHECK OUT. Informasi Tagihan Kuitansi ditampilkan pada kolom terakhir.</span></div></div>
+<div style="overflow:auto"><table class="wo-detail-table"><thead><tr>
+<th>No</th><th>No. WO</th><th>Tanggal WO</th><th>Tanggal Target</th><th>Tanggal Check Out</th><th>User</th><th>Customer</th><th>Asuransi</th><th>No. Polisi</th><th>Status</th><th>Tagihan Kuitansi</th><th>Aksi</th>
+</tr></thead><tbody id="woTableBody"></tbody></table></div>
+</div>
+</section>
+</main>
+</div>
+
+<div class="wo-modal" id="woHistoryModal">
+    <div class="wo-modal-box" style="max-width:850px">
+        <div class="wo-modal-head">
+            <div>
+                <h2>Detail Proses WO</h2>
+                <div style="font-size:12px;color:#6b7280;margin-top:4px">Riwayat proses dari Check In sampai Check Out dan proses ulang jika ada.</div>
+            </div>
+            <button type="button" class="wo-close" id="btnCloseWOHistory">×</button>
+        </div>
+        <div class="wo-check-again-info">
+            <div class="wo-check-again-box"><div class="wo-check-again-label">No. WO</div><strong id="woHistoryNumber">-</strong></div>
+            <div class="wo-check-again-box"><div class="wo-check-again-label">Customer</div><strong id="woHistoryCustomer">-</strong></div>
+            <div class="wo-check-again-box"><div class="wo-check-again-label">No. Polisi</div><strong id="woHistoryPlate">-</strong></div>
+        </div>
+        <div id="woHistoryBody"></div>
+    </div>
+</div>
+
+<div class="wo-modal" id="completedNoteModal">
+    <div class="wo-modal-box" style="max-width:560px">
+        <div class="wo-modal-head">
+            <div><h2>Input Keterangan WO Selesai</h2><div style="font-size:12px;color:#6b7280;margin-top:4px">Keterangan ini akan digabungkan dengan Keterangan Check Out pada Laporan Outstanding WO.</div></div>
+            <button type="button" class="wo-close" id="btnCloseCompletedNote">×</button>
+        </div>
+        <div class="wo-info-item" style="margin-bottom:15px">
+            <div class="wo-label">No. WO</div>
+            <strong id="completedNoteWONumber">-</strong>
+        </div>
+        <form id="completedNoteForm">
+            <input type="hidden" id="completedNoteWOId">
+            <div class="wo-form-group">
+                <label for="completedNoteInput">Keterangan</label>
+                <textarea id="completedNoteInput" required placeholder="Isi keterangan WO selesai"></textarea>
+            </div>
+            <div class="wo-actions" style="justify-content:flex-end;margin-top:15px">
+                <button type="button" class="btn-secondary" id="btnCancelCompletedNote">Batal</button>
+                <button type="submit" class="btn-primary wo-flow-button">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="wo-modal" id="checkInAgainModal">
+    <div class="wo-modal-box" style="max-width:560px">
+        <div class="wo-modal-head">
+            <div><h2>Check In Again</h2><div style="font-size:12px;color:#6b7280;margin-top:4px">WO akan kembali ke menu WO dengan status CHECK IN.</div></div>
+            <button type="button" class="wo-close" id="btnCloseCheckInAgain">×</button>
+        </div>
+        <div class="wo-info-item" style="margin-bottom:15px">
+            <div class="wo-label">No. WO</div>
+            <strong id="checkInAgainWONumber">-</strong>
+        </div>
+        <form id="checkInAgainForm">
+            <input type="hidden" id="checkInAgainWOId">
+            <div class="wo-form-group">
+                <label for="checkInAgainNote">Keterangan Check In Again</label>
+                <textarea id="checkInAgainNote" required placeholder="Isi alasan / keterangan Check In Again"></textarea>
+            </div>
+            <div class="wo-actions" style="justify-content:flex-end;margin-top:15px">
+                <button type="button" class="btn-secondary" id="btnCancelCheckInAgain">Batal</button>
+                <button type="submit" class="btn-primary wo-flow-button">OK</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="layout.js"></script>
+<script src="wo.js"></script>
+</body>
+</html>

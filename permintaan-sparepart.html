@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.ps-list-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}.ps-list-panel .panel-header{padding:20px}.ps-table{width:100%;border-collapse:collapse}.ps-table th,.ps-table td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:12px}.ps-table th{background:#f8fafc}.ps-actions{display:flex;gap:7px;flex-wrap:wrap}.ps-modal{position:fixed;inset:0;background:rgba(15,23,42,.48);display:none;align-items:center;justify-content:center;padding:20px;z-index:3000}.ps-modal.show{display:flex}.ps-box{width:min(1500px,98vw);max-height:90vh;overflow:auto;background:#fff;border-radius:12px;padding:22px}.ps-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.ps-head h2{margin:0;font-size:18px}.ps-close{border:0;background:transparent;font-size:24px;cursor:pointer}.ps-info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}.ps-info-item{border:1px solid #e5e7eb;border-radius:8px;padding:9px}.ps-info-label{font-size:11px;color:#6b7280}.ps-info-value{font-weight:600;font-size:13px;margin-top:3px}.ps-form{width:100%;min-width:1450px;border-collapse:collapse}.ps-form th,.ps-form td{padding:8px;border:1px solid #e5e7eb;font-size:12px}.ps-form th{background:#f8fafc}.ps-form input,.ps-form select{width:100%;min-width:105px;box-sizing:border-box;padding:8px;border:1px solid #d1d5db;border-radius:6px;background:#fff}.ps-form th:nth-child(2){min-width:150px}.ps-form th:nth-child(3){min-width:135px}.ps-form th:nth-child(5),.ps-form th:nth-child(7),.ps-form th:nth-child(8),.ps-form th:nth-child(10),.ps-form th:nth-child(11){min-width:135px}.ps-form th:nth-child(6),.ps-form th:nth-child(9){min-width:105px}.ps-form th:nth-child(12){min-width:140px}.ps-vendor-other{margin-top:5px}.ps-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.ps-empty{text-align:center;color:#6b7280;padding:30px!important}.ps-badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#fef3c7;color:#92400e;font-weight:700;font-size:11px}.ps-badge.done{background:#dcfce7;color:#166534}.ps-note{margin:10px 0;padding:10px 12px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:7px;font-size:12px}.ps-arrival-form label{display:block;font-size:12px;font-weight:600;margin-bottom:6px}.ps-arrival-form input,.ps-arrival-form textarea{width:100%;box-sizing:border-box;padding:9px;border:1px solid #d1d5db;border-radius:7px;margin-bottom:12px}.ps-arrival-form textarea{min-height:80px}.ps-arrival-parts{border:1px solid #e5e7eb;border-radius:7px;margin-bottom:14px;max-height:240px;overflow:auto}.ps-arrival-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-bottom:1px solid #f1f5f9;font-size:12px}.ps-arrival-item:last-child{border-bottom:0}.ps-arrival-item input{width:auto;margin:0}.ps-arrival-item.done{background:#f0fdf4}.ps-arrival-item small{color:#6b7280}.ps-link-btn{background:#2563eb!important;color:#fff!important;border:1px solid #2563eb!important}.ps-link-btn:hover{background:#1d4ed8!important;color:#fff!important;border-color:#1d4ed8!important}@media(max-width:900px){.ps-info{grid-template-columns:1fr 1fr}.ps-table{min-width:900px}.ps-box{padding:15px}}
+.ps-arrival-status{margin:0 0 12px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:7px;background:#f8fafc;font-size:12px;font-weight:700}.ps-arrival-check-row{display:flex;align-items:flex-start;gap:9px;cursor:pointer}.ps-arrival-check-row input{width:auto;margin-top:2px}.ps-arrival-fields{display:grid;grid-template-columns:180px 1fr;gap:8px;margin:8px 0 0 27px}.ps-arrival-fields label{display:block;font-size:10px;color:#6b7280;margin-bottom:4px}.ps-arrival-fields input{width:100%;box-sizing:border-box;padding:7px;border:1px solid #d1d5db;border-radius:6px}.ps-arrival-item small{display:block;color:#6b7280;margin-top:2px}@media(max-width:700px){.ps-arrival-fields{grid-template-columns:1fr;margin-left:0}}\n.ps-link-btn,.ps-actions .btn-primary,.ps-actions .btn-secondary,.supply-link-btn,.supply-actions .btn-primary,.supply-actions .btn-secondary{color:#000!important}\n
+/* Revisi Input Kedatangan: kolom rapi dan checkpoint jelas */
+.ps-arrival-parts{max-height:420px;overflow:auto;padding:0}
+.ps-arrival-item{display:grid;grid-template-columns:44px minmax(220px,1.5fr) 170px minmax(200px,1fr) 120px;gap:10px;align-items:center;padding:12px;border-bottom:1px solid #e5e7eb}
+.ps-arrival-item:last-child{border-bottom:0}
+.ps-arrival-item.done{background:#f0fdf4}
+.ps-arrival-check-cell{display:flex;justify-content:center}
+.ps-arrival-check-cell input{width:20px!important;height:20px!important;cursor:pointer;margin:0!important;accent-color:#16a34a}
+.ps-arrival-part-cell strong,.ps-arrival-part-cell small{display:block}
+.ps-arrival-part-cell small{margin-top:4px;color:#64748b;line-height:1.35}
+.ps-arrival-date-cell label,.ps-arrival-note-cell label{display:block;font-size:10px;color:#64748b;margin-bottom:4px;font-weight:700}
+.ps-arrival-date-cell input,.ps-arrival-note-cell input{width:100%!important;box-sizing:border-box;margin:0!important}
+.ps-arrival-status-cell{text-align:center}
+.ps-arrival-state{display:inline-block;padding:5px 8px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;white-space:nowrap}
+.ps-arrival-item.done .ps-arrival-state{background:#dcfce7;color:#166534}
+.ps-arrival-info{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px}
+@media(max-width:850px){.ps-arrival-item{grid-template-columns:38px 1fr 1fr}.ps-arrival-part-cell{grid-column:2 / 4}.ps-arrival-status-cell{grid-column:2 / 4;text-align:left}}
+@media(max-width:560px){.ps-arrival-item{grid-template-columns:34px 1fr}.ps-arrival-part-cell,.ps-arrival-date-cell,.ps-arrival-note-cell,.ps-arrival-status-cell{grid-column:2}.ps-arrival-info{grid-template-columns:1fr 1fr}}
+
+
+/* Revisi detail permintaan sparepart: area lebih lebar agar nominal harga terbaca jelas */
+#psDetailModal .ps-box{width:min(1500px,98vw)}
+#psDetailModal .ps-info{grid-template-columns:repeat(4,minmax(0,1fr))}
+#psDetailModal .ps-form{min-width:1450px}
+#psDetailModal .ps-form th,#psDetailModal .ps-form td{white-space:normal}
+#psDetailModal .ps-form input[type="number"]{min-width:125px;text-align:right}
+.ps-return-badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#fee2e2;color:#991b1b;font-weight:700;font-size:11px}
+.ps-return-reason{display:block;margin-top:5px;color:#991b1b;font-size:10px;line-height:1.35;max-width:170px}
+.ps-return-action{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.ps-arrival-item.returned{background:#fff7ed;border-color:#fed7aa}
+@media(max-width:1100px){#psDetailModal .ps-box{width:98vw;padding:16px}}
+</style>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+<body>
+<div class="app">
+<div id="sidebar-container"></div>
+<main class="main">
+<header class="topbar">
+<button class="sidebar-toggle" onclick="toggleSidebar()" type="button" title="Buka/Tutup Menu">☰</button>
+<div class="topbar-title"><div class="page-title">Permintaan Sparepart</div><div class="page-description">Permintaan sparepart untuk WO aktif</div></div>
+<div class="topbar-right"><div class="date-display" id="currentDate">-</div></div>
+</header>
+<section class="content">
+<div class="toolbar">
+<div>
+<h2>Daftar Permintaan Sparepart</h2>
+<p>Menampilkan WO aktif dengan sparepart yang dikerjakan oleh Bengkel.</p>
+</div>
+</div>
+<div class="ps-list-panel"><div class="panel-header"><div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap"><div><h2 style="margin:0">WO Aktif</h2><span style="font-size:12px;color:#6b7280">Hanya sparepart dengan status BENGKEL</span></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><select id="filterPOPermintaanSparepart" style="min-width:150px;padding:9px 11px;border:1px solid #d1d5db;border-radius:7px;background:#fff;box-sizing:border-box"><option value="SEMUA">Semua</option><option value="SUDAH_PO">Sudah PO</option><option value="BELUM_PO">Belum PO</option><option value="SUDAH_PO_BELUM_KOMPLIT">Sudah PO - Belum Komplit</option><option value="KOMPLIT">Komplit</option></select><input id="searchPermintaanSparepart" type="search" placeholder="Cari WO / Estimasi / Customer / No. Polisi" style="min-width:320px;max-width:100%;padding:9px 11px;border:1px solid #d1d5db;border-radius:7px;box-sizing:border-box"></div></div></div>
+<div style="overflow:auto"><table class="ps-table"><thead><tr><th>No</th><th>No. WO</th><th>No. Estimasi</th><th>Customer</th><th>No. Polisi</th><th>Asuransi</th><th>Jumlah Sparepart Bengkel</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="psWOBody"></tbody></table></div></div>
+</div>
+</section>
+</main>
+</div>
+<div class="ps-modal" id="psDetailModal"><div class="ps-box"><div class="ps-head"><h2 id="psDetailTitle">Detail Permintaan Sparepart</h2><button class="ps-close" onclick="closePSDetail()">×</button></div><div id="psDetailInfo"></div><div class="ps-note">SKU / No. Part pada form ini hanya untuk kebutuhan pembelian dan <strong>tidak mengubah Estimasi maupun WO</strong>.</div><div style="overflow:auto"><table class="ps-form"><thead><tr><th>No</th><th>Nama Sparepart</th><th>SKU / No. Part</th><th>Qty</th><th>Harga Price List</th><th>Diskon (%)</th><th>Netto Harga Beli</th><th>Harga Jual</th><th>Diskon Asuransi (%)</th><th>Netto Harga Jual</th><th>Margin</th><th>Vendor</th><th>Status / Aksi</th></tr></thead><tbody id="psDetailBody"></tbody></table></div><div class="ps-modal-actions"><button class="btn-secondary" onclick="closePSDetail()">Tutup</button><button class="btn-primary" onclick="createPurchaseOrder()">Buat Purchase Order</button></div></div></div>
+<div class="ps-modal" id="psArrivalModal"><div class="ps-box" style="width:min(980px,100%)"><div class="ps-head"><h2>Input Kedatangan</h2><button class="ps-close" onclick="closePSArrival()">×</button></div><form class="ps-arrival-form" onsubmit="saveArrival(event)">
+<div id="psArrivalPartInfo"></div>
+<div id="psArrivalStatus" class="ps-arrival-status"></div>
+<label>Pilih Sparepart yang Datang *</label>
+<div id="psArrivalParts" class="ps-arrival-parts"></div>
+<div class="ps-note"><strong>Checkpoint:</strong> centang hanya sparepart yang benar-benar datang. Jika checkpoint tidak dicentang, sparepart tetap berstatus <strong>BELUM DATANG</strong>. Tanggal kedatangan dan keterangan diisi <strong>per sparepart</strong>. Tanggal kedatangan dan keterangan diisi <strong>per sparepart</strong>. Sparepart yang tidak dicentang tetap BELUM DATANG.</div><div class="ps-modal-actions"><button type="button" class="btn-secondary" onclick="closePSArrival()">Batal</button><button type="submit" class="btn-primary">Simpan</button></div></form></div></div>
+<script src="layout.js"></script>
+<script src="receipt-photos.js"></script><script src="permintaan-sparepart.js"></script>
+</body>
+</html>

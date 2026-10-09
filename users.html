@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* =========================================================
+   USER & ROLE
+========================================================= */
+.users-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}
+.users-toolbar h1{margin:0;font-size:20px}
+.users-toolbar p{margin:5px 0 0;color:#6b7280;font-size:12px}
+.users-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.users-table-wrap{overflow:auto}
+.users-table{width:100%;border-collapse:collapse;min-width:820px}
+.users-table th,.users-table td{padding:12px 14px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:12px;vertical-align:middle}
+.users-table th{background:#f8fafc;color:#475569;font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.users-table tbody tr:hover{background:#fafcff}
+.users-table tbody tr:last-child td{border-bottom:0}
+.user-name{font-weight:700;color:#1f2937}
+.user-login{color:#64748b;margin-top:3px}
+.user-role{font-weight:600;color:#334155}
+.user-role-desc{color:#94a3b8;font-size:11px;margin-top:3px}
+.badge-active,.badge-off{display:inline-block;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:700}
+.badge-active{background:#dcfce7;color:#166534}.badge-off{background:#fee2e2;color:#991b1b}
+.user-actions{display:flex;gap:6px;flex-wrap:wrap}
+.user-btn{border:1px solid #d1d5db;background:#fff;color:#1f2937;border-radius:7px;padding:7px 11px;font-size:12px;font-weight:600}
+.user-btn:hover{background:#f8fafc}.user-btn.primary{border-color:#2563eb;background:#2563eb;color:#fff}.user-btn.primary:hover{background:#1d4ed8}.user-btn.danger{color:#b91c1c;border-color:#fecaca}
+.users-empty{padding:32px!important;text-align:center;color:#64748b}
+.users-notice{display:none;margin-bottom:14px;padding:10px 12px;border-radius:8px;font-size:12px}.users-notice.show{display:block}.users-notice.error{background:#fee2e2;color:#991b1b}.users-notice.success{background:#dcfce7;color:#166534}
+.manager-only-note{margin-bottom:16px;padding:10px 12px;border:1px solid #dbeafe;background:#eff6ff;color:#1e40af;border-radius:8px;font-size:12px}
+.user-modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:3000}
+.user-modal.show{display:flex}.user-dialog{width:min(520px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:12px;padding:22px;box-shadow:0 20px 60px rgba(15,23,42,.25)}
+.user-dialog-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:18px}.user-dialog-head h2{margin:0;font-size:18px}.user-dialog-head p{margin:5px 0 0;color:#6b7280;font-size:12px}.user-close{border:0;background:transparent;font-size:24px;line-height:1;color:#64748b;cursor:pointer}
+.user-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.user-field{margin-bottom:2px}.user-field.full{grid-column:1 / -1}.user-field label{display:block;margin-bottom:6px;color:#475569;font-size:11px;font-weight:700}.user-field input,.user-field select{width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:7px;background:#fff;font-size:13px;outline:none}.user-field input:focus,.user-field select:focus{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.08)}.user-help{margin-top:5px;color:#94a3b8;font-size:10px}
+.delete-password-panel{margin-bottom:16px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.delete-password-head h2{margin:0;font-size:16px;color:#1f2937}.delete-password-head p{margin:5px 0 0;color:#64748b;font-size:11px}.delete-password-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.delete-password-actions{display:flex;justify-content:flex-end;margin-top:16px;padding-top:14px;border-top:1px solid #e5e7eb}
+.user-check{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;color:#334155}.user-check input{width:auto!important}.user-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:22px;padding-top:16px;border-top:1px solid #e5e7eb}
+@media(max-width:650px){.users-toolbar{flex-direction:column}.user-form-grid{grid-template-columns:1fr}.user-field.full{grid-column:auto}}
+</style>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+<body>
+<div class="app">
+    <div id="sidebar-container"></div>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" type="button" title="Buka/Tutup Menu">☰</button>
+            <div class="topbar-title">
+                <div class="page-title">User &amp; Role</div>
+                <div class="page-description">Kelola akun login dan hak akses pengguna MyWorkshop</div>
+            </div>
+            <div class="topbar-right">
+                <div class="date-display" id="currentDate">-</div>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="users-toolbar">
+                <div>
+                    <h1>Daftar User</h1>
+                    <p>Manager Master dapat membuat akun untuk Service Advisor, Billing, dan Gudang.</p>
+                </div>
+                <div id="superAdminWorkshopFilter" style="display:none;align-items:center;gap:8px;flex-wrap:wrap">
+                    <label for="filterWorkshop" style="font-size:11px;font-weight:700;color:#475569">Bengkel</label>
+                    <select id="filterWorkshop" class="user-btn" style="min-width:220px;padding:8px 10px;font-weight:500">
+                        <option value="">Semua Bengkel</option>
+                    </select>
+                </div>
+                <button id="btnAddUser" class="user-btn primary" type="button">+ Tambah User</button>
+            </div>
+
+            <div id="managerOnlyNote" class="manager-only-note" style="display:none"></div>
+            <div id="usersNotice" class="users-notice"></div>
+
+            <div id="deletePasswordPanel" class="delete-password-panel" style="display:none">
+                <div class="delete-password-head">
+                    <div>
+                        <h2>Password Penghapusan</h2>
+                        <p>Password ini digunakan bersama oleh seluruh user untuk Hapus Estimasi dan Hapus WO. Hanya Manager Master yang dapat mengubahnya.</p>
+                    </div>
+                </div>
+                <div class="delete-password-grid">
+                    <div class="user-field">
+                        <label for="deleteEstimatePassword">Password Hapus Estimasi</label>
+                        <input id="deleteEstimatePassword" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter">
+                    </div>
+                    <div class="user-field">
+                        <label for="deleteWOPassword">Password Hapus WO</label>
+                        <input id="deleteWOPassword" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter">
+                    </div>
+                </div>
+                <div class="delete-password-actions">
+                    <button id="saveDeletePasswords" class="user-btn primary" type="button">Simpan Password Penghapusan</button>
+                </div>
+            </div>
+
+            <div id="paymentBankPanel" class="delete-password-panel" style="display:none">
+                <div class="delete-password-head">
+                    <div>
+                        <h2>Rekening Pembayaran</h2>
+                        <p>Atur 1 rekening khusus Tagihan Own Risk (OR) dan beberapa rekening untuk KWITANSI PERBAIKAN. Hanya Manager Master yang dapat mengubahnya.</p>
+                    </div>
+                </div>
+                <div style="margin-top:16px;padding:14px;border:1px solid #e5e7eb;border-radius:8px">
+                    <h3 style="margin:0 0 12px;font-size:14px">Rekening Tagihan Own Risk (OR) — 1 Rekening</h3>
+                    <div class="delete-password-grid">
+                        <div class="user-field"><label for="orBankName">Nama Bank</label><input id="orBankName" placeholder="Contoh: BCA"></div>
+                        <div class="user-field"><label for="orAccountNumber">Nomor Rekening</label><input id="orAccountNumber" placeholder="Nomor rekening"></div>
+                        <div class="user-field" style="grid-column:1/-1"><label for="orAccountName">Atas Nama</label><input id="orAccountName" placeholder="Nama pemilik rekening"></div>
+                    </div>
+                </div>
+                <div style="margin-top:14px;padding:14px;border:1px solid #e5e7eb;border-radius:8px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px"><h3 style="margin:0;font-size:14px">Rekening KWITANSI PERBAIKAN</h3><button id="addKuitansiBank" class="user-btn" type="button">+ Tambah Rekening</button></div>
+                    <div id="kuitansiBankList"></div>
+                </div>
+                <div class="delete-password-actions"><button id="savePaymentBankSettings" class="user-btn primary" type="button">Simpan Rekening Pembayaran</button></div>
+            </div>
+
+            <div class="users-panel">
+                <div class="users-table-wrap">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Nama User</th>
+                                <th>Username / ID Login</th>
+                                <th>Role</th>
+                                <th id="workshopHeader" style="display:none">Bengkel</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="6" class="users-empty">Memuat data user...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div id="userModal" class="user-modal" aria-hidden="true">
+    <div class="user-dialog">
+        <div class="user-dialog-head">
+            <div>
+                <h2 id="userModalTitle">Tambah User</h2>
+                <p id="userModalDescription">Buat ID login baru untuk pengguna MyWorkshop.</p>
+            </div>
+            <button class="user-close" id="closeUserModal" type="button" aria-label="Tutup">×</button>
+        </div>
+
+        <form id="userForm">
+            <input type="hidden" id="editUserId">
+            <div class="user-form-grid">
+                <div class="user-field full">
+                    <label for="editFullName">Nama User *</label>
+                    <input id="editFullName" required placeholder="Contoh: Budi Santoso">
+                </div>
+                <div class="user-field">
+                    <label for="editUsername">Username / ID Login *</label>
+                    <input id="editUsername" required autocomplete="username" placeholder="Contoh: budi">
+                </div>
+                <div class="user-field">
+                    <label for="editRole">Role *</label>
+                    <select id="editRole" required></select>
+                </div>
+                <div class="user-field full" id="targetWorkshopField" style="display:none">
+                    <label for="editWorkshop">Tujuan Bengkel *</label>
+                    <select id="editWorkshop" required>
+                        <option value="">Pilih Bengkel</option>
+                    </select>
+                    <div class="user-help">Khusus Super Admin: tentukan user ini akan ditempatkan di bengkel mana.</div>
+                </div>
+                <div class="user-field full">
+                    <label for="editPassword">Password <span id="passwordRequiredMark">*</span></label>
+                    <input id="editPassword" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter">
+                    <div class="user-help" id="passwordHelp">Password digunakan untuk login pertama kali.</div>
+                </div>
+                <div class="user-field full">
+                    <label class="user-check"><input id="editActive" type="checkbox" checked> User aktif dan dapat login</label>
+                </div>
+            </div>
+
+            <div class="user-modal-actions">
+                <button class="user-btn" id="cancelUserEdit" type="button">Batal</button>
+                <button class="user-btn primary" type="submit" id="saveUserButton">Simpan User</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="layout.js"></script>
+<script src="users.js"></script>
+</body>
+</html>

@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MyWorkshop</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <style>
+
+        /* ==================================================
+           ESTIMASI PAGE
+        ================================================== */
+
+        .estimate-page {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+
+        /* ==================================================
+           FORM SECTION
+        ================================================== */
+
+        .form-section {
+            margin-bottom: 22px;
+        }
+
+        .form-section h3 {
+            margin: 0 0 14px;
+            font-size: 17px;
+        }
+
+
+        .form-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+
+        .form-grid.three {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+
+            width: 100%;
+            box-sizing: border-box;
+
+            padding: 10px 12px;
+
+            border: 1px solid #d9dee7;
+
+            border-radius: 8px;
+
+            background: #fff;
+
+        }
+
+
+        /* ==================================================
+           CUSTOMER SEARCH
+        ================================================== */
+
+        .customer-search-wrap {
+            position: relative;
+        }
+
+
+        .customer-results {
+
+            position: absolute;
+
+            left: 0;
+            right: 0;
+            top: 100%;
+
+            z-index: 50;
+
+            background: #fff;
+
+            border: 1px solid #d9dee7;
+
+            border-radius: 8px;
+
+            max-height: 220px;
+
+            overflow: auto;
+
+            display: none;
+
+            box-shadow:
+                0 8px 24px
+                rgba(0, 0, 0, .12);
+
+        }
+
+
+        .customer-results.show {
+            display: block;
+        }
+
+
+        .customer-result {
+
+            padding: 10px 12px;
+
+            cursor: pointer;
+
+            border-bottom:
+                1px solid #eef1f5;
+
+        }
+
+
+        .customer-result:hover {
+            background: #f6f8fb;
+        }
+
+
+        .customer-selected {
+
+            margin-top: 7px;
+
+            padding: 9px 11px;
+
+            border-radius: 8px;
+
+            background: #f4f7fb;
+
+            font-size: 13px;
+
+            display: none;
+
+        }
+
+
+        /* ==================================================
+           TABLE DETAIL
+        ================================================== */
+
+        .line-table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+        }
+
+
+        .line-table th,
+        .line-table td {
+
+            padding: 9px 7px;
+
+            border-bottom:
+                1px solid #edf0f4;
+
+            vertical-align: middle;
+
+        }
+
+
+        .line-table th {
+
+            text-align: left;
+
+            font-size: 12px;
+
+            color: #5f6875;
+
+            white-space: nowrap;
+
+        }
+
+
+        .line-table input,
+        .line-table select {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 8px;
+
+            border:
+                1px solid #d9dee7;
+
+            border-radius: 7px;
+
+        }
+
+
+        .num {
+
+            text-align: right;
+
+            white-space: nowrap;
+
+        }
+
+
+        .remove-btn {
+
+            border: 0;
+
+            background: transparent;
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+        }
+
+
+        .add-row {
+            margin-top: 10px;
+        }
+
+
+        /* ==================================================
+           SUMMARY
+        ================================================== */
+
+        .summary {
+
+            margin-left: auto;
+
+            width:
+                min(520px, 100%);
+
+        }
+
+
+        .summary-row {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 180px;
+
+            gap: 12px;
+
+            align-items: center;
+
+            padding: 7px 0;
+
+        }
+
+
+        .summary-row label {
+            font-weight: 600;
+        }
+
+
+        .summary-row input,
+        .summary-row select {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 9px 10px;
+
+            border:
+                1px solid #d9dee7;
+
+            border-radius: 8px;
+
+        }
+
+
+        .summary-row.total {
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            border-top:
+                1px solid #dfe3e9;
+
+            margin-top: 6px;
+
+            padding-top: 12px;
+
+        }
+
+
+        .split-box {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 10px;
+
+        }
+
+
+        .readonly {
+            background:
+                #f5f7fa !important;
+        }
+
+
+        /* ==================================================
+           MESSAGE
+        ================================================== */
+
+        .message {
+
+            margin-top: 10px;
+
+            min-height: 20px;
+
+            font-size: 13px;
+
+        }
+
+
+        .message.error {
+            color: #b42318;
+        }
+
+
+        .message.success {
+            color: #067647;
+        }
+
+
+        /* ==================================================
+           MODAL ESTIMASI
+        ================================================== */
+
+        .modal-wide .modal-box {
+
+            width:
+                min(1100px, 96vw);
+
+            max-height:
+                92vh;
+
+            overflow:
+                auto;
+
+        }
+
+
+        .modal-wide .modal-body {
+            padding-top: 18px;
+        }
+
+
+        .currency {
+            font-variant-numeric:
+                tabular-nums;
+        }
+
+
+        .badge.dibuat {
+            background: #e8f1ff;
+        }
+
+
+        .badge.approved {
+            background: #e8f7ee;
+        }
+
+
+        .badge.cancelled {
+            background: #fdecec;
+        }
+
+
+        /* ==================================================
+           RESPONSIVE
+        ================================================== */
+
+        @media (max-width: 900px) {
+
+            .form-grid,
+            .form-grid.three {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .summary {
+                width: 100%;
+            }
+
+
+            .line-table {
+                min-width: 850px;
+            }
+
+
+            .table-scroll {
+                overflow: auto;
+            }
+
+        }
+
+    </style>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- ==================================================
+         SIDEBAR
+    ================================================== -->
+
+    <div id="sidebar-container"></div>
+<!-- ==================================================
+         MAIN
+    ================================================== -->
+
+    <main class="main">
+
+
+        <header class="topbar">
+
+
+            <button
+                class="sidebar-toggle"
+                onclick="toggleSidebar()"
+                type="button"
+            >
+                ☰
+            </button>
+
+
+            <div class="topbar-title">
+
+                <div class="page-title">
+                    Estimasi
+                </div>
+
+                <div class="page-description">
+                    Pembuatan dan Pengelolaan Estimasi MyWorkshop
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <div
+                    class="date-display"
+                    id="currentDate"
+                >
+                    -
+
+            </div>
+
+
+        </header>
+
+
+        <section class="content estimate-page">
+
+
+            <!-- ==================================================
+                 TOOLBAR
+            ================================================== -->
+
+            <div class="toolbar">
+
+
+                <div>
+
+                    <h2>
+                        Daftar Estimasi
+                    </h2>
+
+                    <p>
+                        Kelola Data Estimasi MyWorkshop.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="btn-primary"
+                    type="button"
+                    id="btnBuatEstimasi"
+                >
+                    + Buat Estimasi
+                </button>
+
+
+            </div>
+
+
+            <!-- ==================================================
+                 TABLE ESTIMASI
+            ================================================== -->
+
+            <div class="table-card">
+
+
+                <div class="table-toolbar">
+
+                    <input
+                        class="search"
+                        id="searchEstimasi"
+                        type="text"
+                        placeholder="Cari nomor estimasi, customer, atau nomor polisi..."
+                    >
+
+                    <select
+                        id="filterStatusEstimasi"
+                        aria-label="Filter Status Estimasi"
+                        style="
+                            min-width: 190px;
+                            height: 38px;
+                            padding: 0 12px;
+                            border: 1px solid #d0d5dd;
+                            border-radius: 8px;
+                            background: #fff;
+                            color: #344054;
+                            font-size: 13px;
+                        "
+                    >
+                        <option value="">Semua Status</option>
+                        <option value="DIBUAT">DIBUAT</option>
+                        <option value="SUDAH ADA WO">SUDAH ADA WO</option>
+                    </select>
+
+                </div>
+
+
+                <div class="table-scroll">
+
+
+                    <table>
+
+
+                        <thead>
+
+                        <tr>
+
+                            <th>No</th>
+
+                            <th>No. Estimasi</th>
+
+                            <th>Tanggal</th>
+
+                            <th>Customer</th>
+
+                            <th>Asuransi</th>
+
+                            <th>Kendaraan</th>
+
+                            <th>No. Polisi</th>
+
+                            <th>User</th>
+
+                            <th>Status</th>
+
+                            <th>Aksi</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody id="estimasiTableBody"></tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- ======================================================
+     MODAL ESTIMASI
+====================================================== -->
+
+<div
+    class="modal modal-wide"
+    id="estimasiModal"
+>
+
+
+    <div class="modal-box">
+
+
+        <!-- HEADER -->
+
+        <div class="modal-header">
+
+
+            <div>
+
+                <h2 id="estimasiModalTitle">
+                    Buat Estimasi
+                </h2>
+
+                <p>
+                    Isi data customer, kendaraan, sparepart, dan jasa.
+                </p>
+
+            </div>
+
+
+            <button
+                class="close"
+                type="button"
+                onclick="closeEstimasiForm()"
+            >
+                ×
+            </button>
+
+
+        </div>
+
+
+        <!-- FORM -->
+
+        <form id="estimasiForm">
+
+
+            <div class="modal-body">
+
+
+                <input
+                    type="hidden"
+                    id="estimasiId"
+                >
+
+
+                <!-- ==================================================
+                     1. IDENTITAS CUSTOMER & KENDARAAN
+                ================================================== -->
+
+                <div class="form-section">
+
+
+                    <h3>
+                        1. Customer & Kendaraan
+                    </h3>
+
+
+                    <div class="form-grid three">
+
+
+                        <!-- CUSTOMER -->
+
+                        <div class="form-group">
+
+
+                            <label>
+                                Nama Customer *
+                            </label>
+
+
+                            <div class="customer-search-wrap">
+
+
+                                <input
+                                    id="customerSearch"
+                                    type="text"
+                                    autocomplete="off"
+                                    placeholder="Ketik nama / kode customer untuk mencari..."
+                                >
+
+
+                                <div
+                                    id="customerResults"
+                                    class="customer-results"
+                                ></div>
+
+
+                            </div>
+
+
+                            <input
+                                type="hidden"
+                                id="estimasiCustomer"
+                            >
+
+
+                            <div
+                                id="customerSelected"
+                                class="customer-selected"
+                            ></div>
+
+
+                        </div>
+
+
+                        <!-- NO POLISI -->
+
+                        <div class="form-group">
+
+                            <label>
+                                No. Polisi *
+                            </label>
+
+                            <input
+                                id="estimasiPlate"
+                                type="text"
+                                list="mobilMasukOptions"
+                                required
+                                placeholder="Ketik atau pilih No. Polisi"
+                                autocomplete="off"
+                            >
+
+                            <datalist id="mobilMasukOptions"></datalist>
+
+                            <input type="hidden" id="estimasiMobilMasukId" value="">
+
+                            <small style="color:#667085; margin-top:2px;">
+                                Pilih No. Polisi dari Mobil Masuk untuk mengisi Merek, Type, dan Warna otomatis. Atau Anda bisa diketik manual (Jika tidak ada di daftar mobil masuk).
+                            </small>
+
+                        </div>
+
+
+                        <!-- TANGGAL -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Tanggal Estimasi
+                            </label>
+
+                            <input
+                                id="estimasiDate"
+                                type="text"
+                                readonly
+                                tabindex="-1"
+                            >
+
+                        </div>
+
+
+                        <!-- MERK -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Merk Mobil
+                            </label>
+
+                            <input
+                                id="estimasiBrand"
+                                type="text"
+                                placeholder="Toyota"
+                            >
+
+                        </div>
+
+
+                        <!-- TYPE -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Type Mobil
+                            </label>
+
+                            <input
+                                id="estimasiModel"
+                                type="text"
+                                placeholder="Avanza"
+                            >
+
+                        </div>
+
+
+                        <!-- TAHUN -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Tahun Mobil
+                            </label>
+
+                            <input
+                                id="estimasiYear"
+                                type="number"
+                                min="1900"
+                                max="2100"
+                                placeholder="2022"
+                            >
+
+                        </div>
+
+
+                        <!-- WARNA -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Warna
+                            </label>
+
+                            <input
+                                id="estimasiColor"
+                                type="text"
+                                placeholder="Hitam"
+                            >
+
+                        </div>
+
+
+                        <!-- NO RANGKA -->
+
+                        <div class="form-group">
+
+                            <label>
+                                No. Rangka
+                            </label>
+
+                            <input
+                                id="estimasiVin"
+                                type="text"
+                                placeholder="Nomor Rangka"
+                            >
+
+                        </div>
+
+
+                        <!-- NO MESIN -->
+
+                        <div class="form-group">
+
+                            <label>
+                                No. Mesin
+                            </label>
+
+                            <input
+                                id="estimasiEngine"
+                                type="text"
+                                placeholder="No. Mesin"
+                            >
+
+                        </div>
+
+
+                        <!-- ASURANSI -->
+
+                        <div class="form-group">
+
+                        <label for="estimasiInsurer">
+                          Asuransi
+                         </label>
+
+                        <select
+                         id="estimasiInsurer"
+                           name="insurer_id"
+                         >
+
+                        <option value="">
+                        -- Pilih Asuransi --
+                         </option>
+
+                        </select>
+
+                        </div>
+
+
+                        <!-- NO KLAIM ASURANSI -->
+
+                        <div class="form-group">
+
+                            <label>
+                                No. Klaim Asuransi
+                            </label>
+
+                            <input
+                                id="claimNumber"
+                                type="text"
+                                placeholder="Nomor klaim asuransi"
+                            >
+
+                        </div>
+                        
+                        <!-- NO POLIS ASURANSI -->
+
+                        <div class="form-group">
+
+                            <label>
+                                No. Polis Asuransi
+                            </label>
+
+                            <input
+                                id="PolisNumber"
+                                type="text"
+                                placeholder="Nomor polis asuransi"
+                            >
+
+                        </div>
+
+                        <!-- AGENT -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Agent
+                            </label>
+
+                            <input
+                                id="Agent"
+                                type="text"
+                                placeholder="Agent"
+                            >
+
+                        </div>
+
+                        <!-- CATATAN -->
+
+                        <div class="form-group full">
+
+                            <label>
+                                Catatan
+                            </label>
+
+                            <textarea
+                                id="estimasiNotes"
+                                rows="3"
+                                placeholder="Catatan estimasi"
+                            ></textarea>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- ==================================================
+                     2. SPAREPART
+                ================================================== -->
+
+                <div class="form-section">
+
+
+                    <h3>
+                        2. Pergantian Sparepart
+                    </h3>
+
+
+                    <div class="table-scroll">
+
+
+                        <table class="line-table">
+
+
+                            <thead>
+
+                            <tr>
+
+                                <th style="width:28%">
+                                    Nama Sparepart
+                                </th>
+
+                                <th style="width:22%">
+                                    No. Part / SKU
+                                </th>
+
+                                <th style="width:8%">
+                                    Qty
+                                </th>
+
+                                <th style="width:14%">
+                                    Harga
+                                </th>
+
+                                <th style="width:12%">
+                                    Diskon (%)
+                                </th>
+
+                                <th style="width:16%">
+                                    Jumlah
+                                </th>
+
+                                <th></th>
+
+                            </tr>
+
+                            </thead>
+
+
+                            <tbody
+                                id="sparepartBody"
+                            ></tbody>
+
+
+                        </table>
+
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-secondary add-row"
+                        onclick="addSparepartRow()"
+                    >
+                        + Tambah Sparepart
+                    </button>
+
+
+                </div>
+
+
+                <!-- ==================================================
+                     3. JASA PENGECATAN / PERBAIKAN
+                ================================================== -->
+
+                <div class="form-section">
+
+
+                    <h3>
+                        3. Jasa Pengecatan / Perbaikan
+                    </h3>
+
+
+                    <div class="table-scroll">
+
+
+                        <table class="line-table">
+
+
+                            <thead>
+
+                            <tr>
+
+                                <th style="width:42%">
+                                    Nama Panel
+                                </th>
+
+                                <th style="width:30%">
+                                    Jenis
+                                </th>
+
+                                <th style="width:14%">
+                                    Harga
+                                </th>
+
+                                <th style="width:14%">
+                                    Diskon (%)
+                                </th>
+
+                                <th style="width:22%">
+                                    Jumlah
+                                </th>
+
+                                <th></th>
+
+                            </tr>
+
+                            </thead>
+
+
+                            <tbody
+                                id="jasaBody"
+                            ></tbody>
+
+
+                        </table>
+
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-secondary add-row"
+                        onclick="addJasaRow()"
+                    >
+                        + Tambah Jasa
+                    </button>
+
+
+                </div>
+
+
+                <!-- ==================================================
+                     4. JASA LAIN-LAIN
+                ================================================== -->
+
+                <div class="form-section">
+
+
+                    <h3>
+                        4. Jasa Lain-lain
+                    </h3>
+
+
+                    <div class="table-scroll">
+
+
+                        <table class="line-table">
+
+
+                            <thead>
+
+                            <tr>
+
+                                <th style="width:60%">
+                                    Nama
+                                </th>
+
+                                <th style="width:32%">
+                                    Jumlah
+                                </th>
+
+                                <th></th>
+
+                            </tr>
+
+                            </thead>
+
+
+                            <tbody
+                                id="jasaLainBody"
+                            ></tbody>
+
+
+                        </table>
+
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-secondary add-row"
+                        onclick="addJasaLainRow()"
+                    >
+                        + Tambah Jasa Lain-lain
+                    </button>
+
+
+                </div>
+
+
+                <!-- ==================================================
+                     PERHITUNGAN
+                ================================================== -->
+
+                <div class="summary">
+
+
+                    <div class="summary-row">
+
+                        <label>
+                            Jumlah Sparepart
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumSparepart"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <label>
+                            Jumlah Jasa Pengecatan / Perbaikan
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumJasa"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <label>
+                            Jumlah Jasa Lain-lain
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumJasaLain"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <label>
+                            Jumlah
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumSubtotal"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+
+                    <!-- PPN -->
+
+                    <div class="summary-row">
+
+                        <label>
+                            PPN
+                        </label>
+
+                        <select id="ppnPercent">
+
+                            <option value="0">
+                                Tidak ada PPN
+                            </option>
+
+                            <option value="10">
+                                10%
+                            </option>
+
+                            <option value="11">
+                                11%
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <label>
+                            Dasar PPN
+                        </label>
+
+                        <select id="ppnType">
+
+                            <option value="COMPLETE">
+                                Atas Lengkap
+                            </option>
+
+                            <option value="SPAREPART_JASA">
+                                Atas Sparepart dan Jasa
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <label>
+                            Nilai PPN
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumPpn"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+                    <!-- MATERIAL LABOUR -->
+
+                    <div class="summary-row">
+
+                        <label>
+                            Material : Labour
+                        </label>
+
+
+                        <div class="split-box">
+
+
+                            <input
+                                id="materialPercent"
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                value="0"
+                                placeholder="Material %"
+                            >
+
+
+                            <input
+                                id="labourPercent"
+                                class="readonly"
+                                type="number"
+                                value="100"
+                                readonly
+                                title="Otomatis = 100% - Material"
+                            >
+
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <label>
+                            Nilai Labour
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumLabour"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <label>
+                            PPH (2% × Labour)
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumPph"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+                    <!-- OR -->
+
+                    <div class="summary-row">
+
+                        <label>
+                            OR (Own Risk)
+                        </label>
+
+                        <input
+                            id="ownRisk"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value="0"
+                            inputmode="decimal"
+                        >
+
+                    </div>
+
+
+                    <!-- GRAND TOTAL -->
+
+                    <div class="summary-row total">
+
+                        <label>
+                            Grand Total
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumGrandTotal"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+                    <!-- TOTAL DITAGIHKAN -->
+
+                    <div class="summary-row total">
+
+                        <label>
+                            Total Ditagihkan
+                        </label>
+
+                        <strong
+                            class="num currency"
+                            id="sumBilled"
+                        >
+                            Rp 0
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                    id="estimasiMessage"
+                    class="message"
+                ></div>
+
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    onclick="closeEstimasiForm()"
+                >
+                    Batal
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-primary"
+                    id="createButton"
+                    onclick="submitEstimasi('DIBUAT')"
+                >
+                    Simpan Estimasi
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- ======================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+window.estimasiJSLoaded = false;
+</script>
+<script>
+window.onerror = function(message, source, lineno, colno, error) {
+
+    alert(
+        "ERROR estimasi.js:\n\n" +
+        message +
+        "\n\nBaris: " +
+        lineno +
+        "\nKolom: " +
+        colno
+    );
+
+    return false;
+};
+</script>
+<script src="estimasi.js?v=20260927-history1"
+        onload="window.estimasiJSLoaded = true;"
+        onerror="alert('GAGAL MEMUAT estimasi.js');">
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const btn = document.getElementById("btnBuatEstimasi");
+
+    if (!btn) {
+        alert("Tombol btnBuatEstimasi tidak ditemukan.");
+        return;
+    }
+
+    btn.onclick = function () {
+
+        if (typeof window.openEstimasiForm === "function") {
+
+            window.openEstimasiForm();
+
+            return;
+        }
+
+        if (window.estimasiJSLoaded === false) {
+
+            alert("estimasi.js TIDAK BERHASIL DIMUAT.");
+
+            return;
+        }
+
+        alert(
+            "estimasi.js berhasil dimuat, tetapi openEstimasiForm tidak tersedia."
+        );
+
+    };
+
+});
+</script>
+
+<script src="layout.js"></script>
+</body>
+</html>

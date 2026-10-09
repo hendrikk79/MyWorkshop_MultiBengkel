@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.sa-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.sa-settings-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.sa-settings-card h3{margin:0 0 6px;font-size:16px;color:#111827}.sa-settings-card p{margin:0 0 16px;color:#64748b;font-size:13px;line-height:1.5}
+.sa-setting-row{display:flex;justify-content:space-between;gap:20px;padding:11px 0;border-top:1px solid #f1f5f9;font-size:13px}.sa-setting-row:first-child{border-top:0;padding-top:0}.sa-label{color:#64748b}.sa-value{font-weight:600;color:#111827;text-align:right}.sa-badge{display:inline-block;padding:4px 9px;border-radius:999px;background:#dcfce7;color:#166534;font-size:12px;font-weight:700}
+.sa-checkbox-row{display:flex;align-items:center;gap:8px;margin:10px 0}.sa-checkbox-row input[type="checkbox"]{width:18px;height:18px;min-width:18px;min-height:18px;margin:0;accent-color:#2563eb}.sa-checkbox-row label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#111827}.sa-note{margin-top:16px;padding:12px 14px;border-radius:9px;background:#f8fafc;color:#475569;font-size:12px;line-height:1.5}
+.sa-modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}.sa-modal-backdrop.show{display:flex}.sa-modal{width:min(420px,100%);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(15,23,42,.25);padding:24px;text-align:center}.sa-modal h4{margin:0 0 8px;color:#111827;font-size:18px}.sa-modal p{margin:0 0 20px;color:#64748b;font-size:14px;line-height:1.5}.sa-success-icon{width:68px;height:68px;border-radius:50%;background:#22c55e;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(34,197,94,.28);animation:saSuccessPop .35s ease-out}.sa-modal button{display:none}@keyframes saSuccessPop{0%{transform:scale(.55);opacity:.2}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}.sa-last-update{margin:2px 0 12px;color:#64748b;font-size:12px}.sa-last-update strong{color:#334155}@media(max-width:800px){.sa-settings-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="sidebar-container"></div>
+  <main class="main">
+    <header class="topbar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()" type="button">☰</button>
+      <div class="topbar-title">
+        <div class="page-title">Pengaturan Sistem</div>
+        <div class="page-description">Pengaturan yang berlaku untuk MyWorkshop secara keseluruhan</div>
+      </div>
+    </header>
+    <section class="content">
+      <div class="sa-settings-grid">
+        <div class="sa-settings-card">
+          <h3>Identitas Aplikasi</h3><p>Pengaturan identitas aplikasi pada tingkat sistem.</p>
+          <label>Nama Aplikasi</label><input id="app-name" type="text" value="MyWorkshop" style="width:100%;padding:9px;margin:6px 0 12px;box-sizing:border-box">
+          <label>Versi Aplikasi</label><input id="app-version" type="text" value="1.0.0" placeholder="Contoh: 1.0.0" style="width:100%;padding:9px;margin:6px 0 12px;box-sizing:border-box">
+          <div id="app-last-update" class="sa-last-update">Terakhir diperbarui: <strong>-</strong></div>
+          <button class="btn btn-primary" type="button" id="save-settings">Simpan Pengaturan</button>
+        </div>
+        <div class="sa-settings-card">
+          <h3>Multi-Bengkel</h3><p>Pengaturan default untuk instalasi multi-bengkel.</p>
+          <div class="sa-checkbox-row"><label><input id="multi-workshop" type="checkbox"> <span>Multi-Bengkel Aktif</span></label></div>
+          <div class="sa-checkbox-row"><label><input id="new-workshop-active" type="checkbox"> <span>Bengkel baru langsung Aktif</span></label></div>
+        </div>
+        <div class="sa-settings-card">
+          <h3>Keamanan Sistem</h3><p>Ketentuan dasar akun sistem. Password minimum tidak boleh kurang dari 6 karakter.</p>
+          <label>Password Minimum</label><input id="password-min" type="number" min="6" max="128" style="width:100%;padding:9px;margin:6px 0 12px;box-sizing:border-box">
+          <label>Durasi Sesi (jam)</label><input id="session-hours" type="number" min="1" max="168" style="width:100%;padding:9px;margin:6px 0 12px;box-sizing:border-box">
+        </div>
+        <div class="sa-settings-card">
+          <h3>Nomor & Kode Sistem</h3><p>Identitas otomatis tingkat sistem.</p>
+          <div class="sa-setting-row"><span class="sa-label">Kode Bengkel</span><span class="sa-value">BKL-####</span></div>
+          <div class="sa-setting-row"><span class="sa-label">Penomoran</span><span class="sa-value">Otomatis</span></div>
+        </div>
+        <div class="sa-settings-card">
+          <h3>Backup & Database</h3><p>Backup mencakup database MyWorkshop seluruh bengkel pada instalasi ini.</p>
+          <div class="sa-setting-row"><span class="sa-label">Database</span><span class="sa-value">SQLite</span></div>
+          <button class="btn btn-primary" type="button" id="backup-db">Backup Database Sekarang</button>
+          <div id="backup-status" class="sa-note" style="display:none"></div>
+        </div>
+        <div class="sa-settings-card">
+          <h3>Informasi Sistem</h3><p>Informasi lingkungan server saat ini.</p>
+          <div class="sa-setting-row"><span class="sa-label">Alamat Aplikasi</span><span class="sa-value" id="system-url">-</span></div>
+          <div class="sa-setting-row"><span class="sa-label">Platform</span><span class="sa-value" id="system-platform">-</span></div>
+          <div class="sa-setting-row"><span class="sa-label">Status Koneksi</span><span class="sa-value" id="system-online">-</span></div>
+          <div class="sa-setting-row"><span class="sa-label">Waktu Lokal</span><span class="sa-value" id="system-time">-</span></div>
+        </div>
+        <div class="sa-settings-card">
+          <h3>Pemeliharaan Sistem</h3><p>Area pemeliharaan dasar sistem.</p>
+          <div class="sa-setting-row"><span class="sa-label">Pemeriksaan Database</span><span class="sa-value">Tersedia melalui server SQLite</span></div>
+          <div class="sa-setting-row"><span class="sa-label">Pembersihan File Sementara</span><span class="sa-value">Tidak otomatis</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div id="sa-success-modal" class="sa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="sa-success-title">
+  <div class="sa-modal">
+    <div class="sa-success-icon" aria-hidden="true"><svg width="38" height="38" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h4 id="sa-success-title">Berhasil</h4>
+    <p id="sa-success-message">Pengaturan Sistem berhasil disimpan.</p>
+  </div>
+</div>
+<script src="layout.js"></script>
+<script>
+(function(){
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  const formatDateTime=(value)=>{if(!value)return '-'; const d=new Date(String(value).replace(' ','T')+'Z'); return isNaN(d.getTime())?String(value):d.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'medium'});};
+  let successTimer=null;
+  const showSuccess=(message)=>{
+    set('sa-success-message',message||'Pengaturan Sistem berhasil disimpan.');
+    const modal=document.getElementById('sa-success-modal');
+    modal.classList.add('show');
+    clearTimeout(successTimer);
+    successTimer=setTimeout(()=>modal.classList.remove('show'),1500);
+  };
+  set('system-url', location.origin); set('system-platform', navigator.platform || 'Browser'); set('system-online', navigator.onLine ? 'ONLINE' : 'OFFLINE');
+  const tick=()=>set('system-time',new Date().toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'medium'})); tick(); setInterval(tick,1000);
+  window.addEventListener('online',()=>set('system-online','ONLINE')); window.addEventListener('offline',()=>set('system-online','OFFLINE'));
+  async function load(){
+    try{ const r=await fetch('/api/super-admin/system-settings'); const j=await r.json(); if(!r.ok||!j.success) throw new Error(j.message||'Gagal mengambil pengaturan.');
+      const d=j.data||{}; document.getElementById('app-name').value=d.app_name||'MyWorkshop'; document.getElementById('app-version').value=d.app_version||'1.0.0'; set('app-last-update', 'Terakhir diperbarui: '+formatDateTime(d.updated_at)); document.getElementById('multi-workshop').checked=!!d.multi_workshop_enabled; document.getElementById('new-workshop-active').checked=!!d.new_workshop_active; document.getElementById('password-min').value=d.password_min_length||6; document.getElementById('session-hours').value=d.session_duration_hours||8;
+    }catch(e){ alert(e.message); }
+  }
+  document.getElementById('save-settings').addEventListener('click',async()=>{
+    const body={app_name:document.getElementById('app-name').value.trim(),app_version:document.getElementById('app-version').value.trim()||'1.0.0',multi_workshop_enabled:document.getElementById('multi-workshop').checked,new_workshop_active:document.getElementById('new-workshop-active').checked,password_min_length:Number(document.getElementById('password-min').value),session_duration_hours:Number(document.getElementById('session-hours').value)};
+    try{ const r=await fetch('/api/super-admin/system-settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); const j=await r.json(); if(!r.ok||!j.success) throw new Error(j.message||'Gagal menyimpan.'); showSuccess(j.message || 'Pengaturan Sistem berhasil disimpan.'); set('app-last-update', 'Terakhir diperbarui: '+formatDateTime(j.data?.updated_at)); }catch(e){ alert(e.message); }
+  });
+  document.getElementById('backup-db').addEventListener('click',async()=>{ const btn=document.getElementById('backup-db'); const s=document.getElementById('backup-status'); s.style.display='block'; s.textContent='Backup sedang dibuat...'; btn.disabled=true; try{ const r=await fetch('/api/super-admin/database/backup',{method:'POST'}); if(!r.ok){ let msg='Gagal membuat backup database.'; try{ const j=await r.json(); if(j.message) msg=j.message; }catch(_){} throw new Error(msg); } const blob=await r.blob(); const disposition=r.headers.get('Content-Disposition')||''; const m=disposition.match(/filename[^;=]*=(?:UTF-8''|\")?([^;\"]+)/i); const filename=m?decodeURIComponent(m[1].replace(/\"/g,'')):'myworkshop-backup.db'; const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); s.textContent='Backup database berhasil dan file sudah diunduh.'; }catch(e){ s.textContent=e.message||'Gagal membuat backup database.'; }finally{ btn.disabled=false; } });
+  load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+.supply-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:18px}
+.supply-table{width:100%;border-collapse:collapse;min-width:980px}
+.supply-table th,.supply-table td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;white-space:nowrap;font-size:12px;vertical-align:middle}
+.supply-table th{background:#f8fafc;font-size:12px}
+.supply-empty{text-align:center;color:#6b7280;padding:30px!important}
+.supply-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.supply-search{flex:1;min-width:280px}.supply-search input{height:40px;box-sizing:border-box;width:100%;padding:0 11px;border:1px solid #d1d5db;border-radius:7px;background:#fff}
+.supply-action{height:40px;padding:0 16px;border:1px solid #d1d5db;border-radius:7px;background:#fff;color:#111827;font-weight:700;cursor:pointer}.supply-action.primary{background:#111827;color:#fff;border-color:#111827}
+.supply-section-title{padding:14px 16px 8px}.supply-section-title h2{margin:0;font-size:16px}.supply-section-title span{font-size:11px;color:#6b7280}
+.supply-pagination{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid #e5e7eb}.supply-page-btn{height:32px;min-width:72px;padding:0 12px;border:1px solid #d1d5db;border-radius:6px;background:#fff;color:#111827;cursor:pointer}.supply-page-btn:disabled{opacity:.45;cursor:not-allowed}.supply-page-info{font-size:12px;color:#6b7280;min-width:90px;text-align:center}
+.supply-badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#f3f4f6;color:#374151}.supply-badge.picked{background:#dcfce7;color:#166534}.supply-badge.withdrawn{background:#fee2e2;color:#991b1b}
+.supply-modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:3000}.supply-modal.show{display:flex}.supply-box{width:min(680px,100%);background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:22px}.supply-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.supply-head h2{margin:0;font-size:19px}.supply-close{border:0;background:transparent;font-size:26px;cursor:pointer}.supply-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.supply-group.full{grid-column:1/-1}.supply-group label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.supply-group input{width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #d1d5db;border-radius:7px;background:#fff;font:inherit}.supply-help{font-size:11px;color:#6b7280;margin-top:5px}.supply-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.supply-pick{height:32px;padding:0 12px;border:1px solid #111827;border-radius:6px;background:#111827;color:#fff;font-weight:700;cursor:pointer}.supply-pick:disabled{opacity:.5;cursor:not-allowed}.supply-withdraw{height:32px;padding:0 12px;border:1px solid #991b1b;border-radius:6px;background:#fff;color:#991b1b;font-weight:700;cursor:pointer}
+@media(max-width:700px){.supply-grid{grid-template-columns:1fr}.supply-group.full{grid-column:auto}.supply-toolbar{align-items:stretch}.supply-action{width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<div id="sidebar-container"></div>
+<main class="main">
+<header class="topbar"><button type="button" class="sidebar-toggle" onclick="toggleSidebar()" title="Buka/Tutup Menu">☰</button><div class="topbar-title"><div class="page-title">Sparepart Supply Belum WO</div><div class="page-description">Sparepart Supply yang sudah masuk tetapi belum memiliki WO</div></div><div class="topbar-right"><div class="date-display" id="currentDate">-</div></div></header>
+<section class="content">
+<div class="toolbar supply-toolbar"><div class="supply-search"><input id="supplySearch" type="search" placeholder="Cari nama sparepart / merek / type / no. polisi / asuransi"></div><button class="supply-action primary" id="btnTambahSupply" type="button">+ Tambah Sparepart Supply</button></div>
+<div class="panel supply-panel">
+<div class="supply-section-title"><h2>Sparepart Supply Belum WO</h2><span>Data Supply yang belum dihubungkan ke identitas WO.</span></div>
+<div style="overflow:auto"><table class="supply-table"><thead><tr><th>No</th><th>Nama Sparepart</th><th>Qty</th><th>Merek</th><th>Type</th><th>No. Polisi</th><th>Asuransi</th><th>Aksi</th></tr></thead><tbody id="supplyPendingBody"></tbody></table></div>
+<div class="supply-pagination" id="supplyPendingPagination"></div>
+</div>
+<div class="panel supply-panel">
+<div class="supply-section-title"><h2>Sparepart Supply Sudah Diambil</h2><span>Data yang sudah dilakukan Pick Up dan telah diberi Identitas WO.</span></div>
+<div style="overflow:auto"><table class="supply-table"><thead><tr><th>No</th><th>Nama Sparepart</th><th>Qty</th><th>Merek</th><th>Type</th><th>No. Polisi</th><th>Asuransi</th><th>Identitas WO</th><th>Diambil Oleh</th><th>Alasan</th><th>Tanggal Diambil</th><th>Status</th></tr></thead><tbody id="supplyPickedBody"></tbody></table></div>
+<div class="supply-pagination" id="supplyPickedPagination"></div>
+</div>
+</section></main></div>
+<div class="supply-modal" id="supplyModal"><div class="supply-box"><div class="supply-head"><h2 id="supplyModalTitle">Tambah Sparepart Supply</h2><button class="supply-close" type="button" id="btnCloseSupply">×</button></div><form id="supplyForm"><div class="supply-grid"><div class="supply-group full"><label for="supplyPartName">Nama Sparepart *</label><input id="supplyPartName" required placeholder="Nama sparepart"></div><div class="supply-group"><label for="supplyQty">Qty *</label><input id="supplyQty" type="number" min="0.01" step="0.01" required placeholder="Jumlah"></div><div class="supply-group"><label for="supplyBrand">Merek</label><input id="supplyBrand" placeholder="Merek mobil"></div><div class="supply-group"><label for="supplyType">Type</label><input id="supplyType" placeholder="Type mobil"></div><div class="supply-group"><label for="supplyPlate">No. Polisi</label><input id="supplyPlate" placeholder="Nomor polisi"></div><div class="supply-group full"><label for="supplyInsurer">Asuransi</label><input id="supplyInsurer" placeholder="Nama asuransi"></div></div><div class="supply-modal-actions"><button type="button" class="btn-secondary" id="btnCancelSupply">Batal</button><button type="submit" class="btn-primary" id="btnSaveSupply">Simpan</button></div></form></div></div>
+<div class="supply-modal" id="pickupModal"><div class="supply-box"><div class="supply-head"><h2 id="pickupModalTitle">Pick Up Sparepart Supply</h2><button class="supply-close" type="button" id="btnClosePickup">×</button></div><form id="pickupForm"><div class="supply-group"><label>Sparepart</label><input id="pickupSummary" readonly></div><div class="supply-group" style="margin-top:12px"><label for="pickupWO">Identitas WO *</label><input id="pickupWO" required placeholder="Ketik identitas WO"><div class="supply-help">Identitas WO diketik oleh user, contoh: WO-2026-0001.</div></div><div class="supply-group" id="pickupByGroup" style="margin-top:12px;display:none"><label for="pickupBy">Diambil Oleh *</label><input id="pickupBy" placeholder="Nama yang mengambil / menarik sparepart"></div><div class="supply-group" id="pickupReasonGroup" style="margin-top:12px;display:none"><label for="pickupReason">Alasan *</label><input id="pickupReason" placeholder="Alasan pembatalan / penarikan"></div><div class="supply-modal-actions"><button type="button" class="btn-secondary" id="btnCancelPickup">Batal</button><button type="submit" class="btn-primary" id="pickupSave">Simpan</button></div></form></div></div>
+<script src="layout.js"></script><script src="receipt-photos.js"></script><script src="sparepart-supply-belum-wo.js"></script>
+</body></html>

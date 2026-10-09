@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><link rel="icon" type="image/png" href="favicon.png">
+<title>MyWorkshop</title><link rel="stylesheet" href="style.css"></head><body><div class="app"><div id="sidebar-container"></div><main class="main"><header class="topbar"><button class="sidebar-toggle" onclick="toggleSidebar()" type="button">☰</button><div class="topbar-title"><div class="page-title">Profil</div><div class="page-description">Informasi akun Super Admin</div></div></header><section class="content"><div class="panel" style="padding:24px"><h2 style="margin-top:0">Profil</h2><div style="display:grid;gap:10px;max-width:520px"><div><small>Nama</small><div id="profileName">-</div></div><div><small>Username</small><div id="profileUsername">-</div></div><div><small>Role</small><div id="profileRole">-</div></div></div><hr style="margin:24px 0;border:0;border-top:1px solid #e5e7eb"><h3 style="margin:0 0 12px">Ganti Password</h3><form id="changePasswordForm" style="display:grid;gap:12px;max-width:520px"><div><label for="currentPassword">Password Saat Ini</label><input id="currentPassword" type="password" autocomplete="current-password" required style="width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #d1d5db;border-radius:7px"></div><div><label for="newPassword">Password Baru</label><input id="newPassword" type="password" autocomplete="new-password" minlength="6" required style="width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #d1d5db;border-radius:7px"><small style="display:block;color:#64748b;margin-top:4px">Minimal 6 karakter.</small></div><div><label for="confirmPassword">Konfirmasi Password Baru</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="6" required style="width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #d1d5db;border-radius:7px"></div><div id="passwordNotice" style="display:none;padding:10px 12px;border-radius:8px;font-size:12px"></div><button type="submit" style="width:max-content;padding:9px 14px;border:0;border-radius:7px;background:#2563eb;color:#fff;font-weight:600;cursor:pointer">Simpan Password</button></form></div></section></main></div><script src="layout.js"></script><script>(function(){
+"use strict";
+function currentUser(){try{return JSON.parse(localStorage.getItem("myworkshop_user")||"null")||{};}catch(e){return {};}}
+const u=currentUser();
+document.getElementById("profileName").textContent=u.full_name||"-";
+document.getElementById("profileUsername").textContent=u.username||"-";
+document.getElementById("profileRole").textContent=u.role?.name||u.role_name||"SUPER ADMIN";
+const form=document.getElementById("changePasswordForm");
+const notice=document.getElementById("passwordNotice");
+function show(message,ok){notice.textContent=message;notice.style.display="block";notice.style.background=ok?"#dcfce7":"#fee2e2";notice.style.color=ok?"#166534":"#991b1b";}
+form.addEventListener("submit",async function(e){
+ e.preventDefault();
+ const current_password=document.getElementById("currentPassword").value;
+ const new_password=document.getElementById("newPassword").value;
+ const confirm_password=document.getElementById("confirmPassword").value;
+ if(new_password.length<6){show("Password baru minimal 6 karakter.",false);return;}
+ if(new_password!==confirm_password){show("Konfirmasi password baru tidak sama.",false);return;}
+ try{
+  const res=await fetch("/api/super-admin/profile/password",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({current_password,new_password})});
+  const json=await res.json();
+  if(!res.ok||!json.success)throw new Error(json.message||"Gagal mengganti password.");
+  form.reset(); show("Password Super Admin berhasil diganti.",true);
+ }catch(err){show(err.message,false);}
+});
+})();</script></body></html>

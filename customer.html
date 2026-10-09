@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MyWorkshop</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <div id="sidebar-container"></div>
+<!-- ==========================================
+         MAIN
+    =========================================== -->
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <button
+                type="button"
+                class="sidebar-toggle"
+                onclick="toggleSidebar()"
+            >
+                ☰
+            </button>
+
+
+            <div class="topbar-title">
+
+                <div class="page-title">
+                    Customer
+                </div>
+
+                <div class="page-description">
+                    Pembuatan Data Customer MyWorkshop
+                </div>
+            </div>
+
+            <div class="topbar-right">
+
+                <div
+                    class="date-display"
+                    id="currentDate"
+                >
+                    -
+
+            </div>
+
+
+        </header>
+
+
+        <!-- ======================================
+             CONTENT
+        ======================================= -->
+
+        <section class="content">
+
+            <div class="toolbar">
+
+                <div>
+
+                    <h2>
+                        Daftar Customer
+                    </h2>
+
+                    <p>
+                        Kelola Data Customer MyWorkshop
+                    </p>
+
+                </div>
+
+
+                <div
+                    style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"
+                >
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        id="btnDownloadCustomerExcel"
+                    >
+                        Download Excel
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        id="btnDownloadCustomerPdf"
+                    >
+                        Download PDF
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        id="btnTambahCustomer"
+                    >
+                        + Tambah Customer
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-card">
+
+                <div class="table-toolbar">
+
+                    <input
+                        type="text"
+                        id="searchCustomer"
+                        class="search"
+                        placeholder="Cari ID customer, nama, atau No. HP..."
+                    >
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>No</th>
+
+                                <th>ID Customer</th>
+
+                                <th>Nama</th>
+
+                                <th>Alamat</th>
+
+                                <th>No. HP</th>
+
+                                <th>Catatan</th>
+
+                                <th>Aksi</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="customerTableBody"
+                        >
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ==========================================
+     MODAL CUSTOMER
+=========================================== -->
+
+<div
+    class="modal"
+    id="customerModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2 id="customerModalTitle">
+                    Tambah Customer
+                </h2>
+
+                <p>
+                    Masukkan data customer
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="close"
+                id="btnCloseCustomer"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="customerForm">
+
+            <div class="modal-body">
+
+                <input
+                    type="hidden"
+                    id="customerId"
+                >
+
+
+                <!-- ID CUSTOMER -->
+
+                <div class="form-group">
+
+                    <label>
+                        ID Customer
+                    </label>
+
+                    <input
+                        type="text"
+                        id="customerCode"
+                        readonly
+                        placeholder="Otomatis"
+                    >
+
+                    <small>
+                        ID customer dibuat otomatis oleh sistem.
+                    </small>
+
+                </div>
+
+
+                <!-- NAMA -->
+
+                <div class="form-group">
+
+                    <label>
+                        Nama Customer *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="customerName"
+                        required
+                        maxlength="150"
+                        placeholder="Masukkan nama customer"
+                    >
+
+                </div>
+
+
+                <!-- ALAMAT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Alamat *
+                    </label>
+
+                    <textarea
+                        id="customerAddress"
+                        required
+                        rows="3"
+                        maxlength="500"
+                        placeholder="Masukkan alamat customer"
+                    ></textarea>
+
+                </div>
+
+
+                <!-- NO HP -->
+
+                <div class="form-group">
+
+                    <label>
+                        No. HP *
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="customerPhone"
+                        required
+                        maxlength="30"
+                        placeholder="Contoh: 081234567890"
+                    >
+
+                </div>
+
+
+                <!-- CATATAN -->
+
+                <div class="form-group">
+
+                    <label>
+                        Catatan
+                    </label>
+
+                    <textarea
+                        id="customerNotes"
+                        rows="3"
+                        maxlength="500"
+                        placeholder="Catatan customer (opsional)"
+                    ></textarea>
+
+                </div>
+
+
+                <div
+                    id="customerMessage"
+                    class="form-message"
+                ></div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    id="btnBatalCustomer"
+                >
+                    Batal
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    id="btnSimpanCustomer"
+                >
+                    Simpan Customer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="layout.js"></script>
+<script src="customer.js"></script>
+
+</body>
+
+</html>

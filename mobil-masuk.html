@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyWorkshop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        .mobil-masuk-page { max-width: 1400px; margin: 0 auto; }
+        .mobil-masuk-form { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; align-items:end; }
+        .mobil-masuk-form .form-group { display:flex; flex-direction:column; gap:6px; }
+        .mobil-masuk-form label { font-weight:600; font-size:13px; }
+        .mobil-masuk-form input { width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid #d9dee7; border-radius:8px; background:#fff; }
+        .mobil-masuk-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; }
+        .mobil-masuk-message { min-height:20px; margin-top:12px; font-size:13px; }
+        .mobil-masuk-message.error { color:#b42318; }
+        .mobil-masuk-message.success { color:#027a48; }
+        .mobil-masuk-empty { text-align:center; padding:28px; color:#667085; }
+        .mobil-masuk-page .btn-danger { border:0; border-radius:7px; padding:7px 12px; cursor:pointer; }
+        @media (max-width:900px) { .mobil-masuk-form { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (max-width:560px) { .mobil-masuk-form { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div id="sidebar-container"></div>
+    <main class="main">
+        <header class="topbar">
+            <button type="button" class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            <div class="topbar-title">
+                <div class="page-title">Mobil Masuk Belum Proses</div>
+                <div class="page-description">Data kendaraan yang masuk sebelum diproses ke Estimasi</div>
+            </div>
+            <div class="topbar-right">
+                <div class="date-display" id="currentDate">-</div>
+            </div>
+        </header>
+
+        <section class="content mobil-masuk-page">
+            <div class="toolbar">
+                <div>
+                    <h2>Daftar Mobil Masuk</h2>
+                    <p>Kendaraan yang belum digunakan untuk membuat Estimasi.</p>
+                </div>
+                <button type="button" class="btn-primary" id="btnTambahMobilMasuk">+ Tambah Mobil Masuk</button>
+            </div>
+
+            <div class="table-card">
+                <div class="table-toolbar">
+                    <input type="text" id="searchMobilMasuk" class="search" placeholder="Cari No. Polisi, Merek, Type, atau Warna...">
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>No. Polisi</th>
+                                <th>Merek</th>
+                                <th>Type</th>
+                                <th>Warna</th>
+                                <th>Tanggal Masuk</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mobilMasukTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="modal" id="mobilMasukModal">
+    <div class="modal-box" style="max-width:900px;">
+        <div class="modal-header">
+            <div>
+                <h2>Tambah Mobil Masuk</h2>
+                <p>Isi data kendaraan yang baru masuk ke bengkel.</p>
+            </div>
+            <button type="button" class="close" id="btnCloseMobilMasuk">×</button>
+        </div>
+        <form id="mobilMasukForm">
+            <div class="modal-body">
+                <div class="mobil-masuk-form">
+                    <div class="form-group">
+                        <label for="mobilMasukPlate">No. Polisi *</label>
+                        <input id="mobilMasukPlate" type="text" required placeholder="Contoh: B 1234 ABC">
+                    </div>
+                    <div class="form-group">
+                        <label for="mobilMasukBrand">Merek *</label>
+                        <input id="mobilMasukBrand" type="text" required placeholder="Toyota">
+                    </div>
+                    <div class="form-group">
+                        <label for="mobilMasukModel">Type *</label>
+                        <input id="mobilMasukModel" type="text" required placeholder="Avanza">
+                    </div>
+                    <div class="form-group">
+                        <label for="mobilMasukColor">Warna *</label>
+                        <input id="mobilMasukColor" type="text" required placeholder="Hitam">
+                    </div>
+                </div>
+                <div id="mobilMasukMessage" class="mobil-masuk-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="btnBatalMobilMasuk">Batal</button>
+                <button type="submit" class="btn-primary">Simpan Mobil Masuk</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="layout.js"></script>
+<script src="mobil-masuk.js"></script>
+</body>
+</html>

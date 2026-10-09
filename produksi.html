@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.wo-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}
+.wo-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.wo-form-group label{display:block;font-weight:600;margin-bottom:6px}
+.wo-form-group input,.wo-form-group select,.wo-form-group textarea{width:100%;padding:9px 11px;border:1px solid #d1d5db;border-radius:6px;background:#fff}
+.wo-form-group textarea{min-height:80px;resize:vertical}
+.wo-section{margin-top:18px}
+.wo-section h3{margin:0 0 10px;font-size:15px}
+.wo-detail-table{width:100%;border-collapse:collapse}
+.wo-detail-table th,.wo-detail-table td{padding:9px 10px;border-bottom:1px solid #e5e7eb;text-align:left}
+.wo-detail-table th{background:#f8fafc}
+.wo-actions{display:flex;gap:7px;flex-wrap:wrap}.btn-small{padding:6px 9px;font-size:12px}.btn-danger{background:#dc2626;color:#fff;border:1px solid #dc2626;border-radius:6px;padding:7px 10px;cursor:pointer}.btn-danger:hover{background:#b91c1c}.wo-info-item{padding:8px 10px;border:1px solid #eef0f3;border-radius:6px}.wo-label{font-size:12px;color:#6b7280;margin-bottom:3px}
+.wo-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:2000}
+.wo-modal.show{display:flex}
+.wo-modal-box{background:#fff;width:min(1000px,100%);max-height:90vh;overflow:auto;border-radius:10px;padding:22px}
+.wo-modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.wo-modal-head h2{margin:0}
+.wo-close{border:0;background:transparent;font-size:24px;cursor:pointer}
+.wo-empty{text-align:center;color:#6b7280;padding:25px}
+.wo-status{font-weight:700}
+@media(max-width:800px){.wo-info-grid,.wo-form-grid{grid-template-columns:1fr}}
+
+.wo-list-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:20px;overflow:hidden}
+.wo-list-panel .panel-header{padding:20px 20px 0}
+.wo-list-panel>div:last-child{padding:0 20px 20px}
+.wo-estimate-picker{position:relative}
+.wo-estimate-picker input[type="search"]{height:40px;box-sizing:border-box}
+.wo-estimate-results{display:none;position:absolute;z-index:2100;left:0;right:0;top:44px;background:#fff;border:1px solid #d1d5db;border-radius:7px;box-shadow:0 10px 25px rgba(0,0,0,.12);max-height:240px;overflow-y:auto}
+.wo-estimate-results.show{display:block}
+.wo-estimate-result{display:block;width:100%;padding:10px 12px;border:0;border-bottom:1px solid #f1f5f9;background:#fff;text-align:left;cursor:pointer;font-size:12px;color:#111827}
+.wo-estimate-result:last-child{border-bottom:0}
+.wo-estimate-result:hover,.wo-estimate-result.selected{background:#eff6ff}
+.wo-estimate-result strong{display:block;font-size:12px;color:#111827}
+.wo-estimate-result span{display:block;margin-top:3px;font-size:11px;color:#6b7280}
+.wo-estimate-empty{padding:12px;color:#6b7280;font-size:12px;text-align:center}
+.wo-search-help{display:block;margin-top:5px;color:#6b7280;font-size:10px}
+.wo-flow-button{background:#2563eb!important;color:#fff!important;border-color:#2563eb!important}
+.wo-flow-button:hover{background:#1d4ed8!important;border-color:#1d4ed8!important}
+.wo-status-badge{background:#eff6ff;color:#1d4ed8}
+
+.wo-supply-select{width:100%;min-width:120px;padding:7px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff;font-size:12px}
+.wo-print-blank{min-width:90px}
+</style>
+<style>
+.production-list-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.production-list-panel .panel-header{padding:20px 20px 0}.production-list-panel>div:last-child{padding:0 20px 20px}
+.production-table{width:100%;border-collapse:collapse;min-width:1200px}.production-table th,.production-table td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;white-space:nowrap}.production-table th{background:#f8fafc;font-size:12px}.production-table td{font-size:13px}
+.production-price{font-weight:600}.production-empty{text-align:center;color:#6b7280;padding:28px}.production-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:3000}.production-modal.show{display:flex}.production-modal-box{background:#fff;width:min(560px,100%);border-radius:10px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.2)}.production-modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.production-modal-head h2{margin:0}.production-close{border:0;background:transparent;font-size:24px;cursor:pointer}.production-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}.production-info-grid>div{border:1px solid #e5e7eb;border-radius:7px;padding:10px}.production-info-grid span{display:block;font-size:11px;color:#6b7280;margin-bottom:4px}.production-info-grid strong{display:block;font-size:14px}.production-form-group{margin-top:14px}.production-form-group label{display:block;font-weight:600;margin-bottom:6px}.production-form-group input,.production-form-group select{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid #d1d5db;border-radius:7px;background:#fff}.production-row-actions{display:flex;gap:6px;align-items:center}.production-btn-input{background:#2563eb!important;color:#fff!important;border-color:#2563eb!important;font-weight:700;cursor:pointer}.production-btn-print{background:#2563eb!important;color:#fff!important;border:1px solid #2563eb!important;font-weight:600;cursor:pointer}.production-btn-print{background:#2563eb!important;color:#fff!important;border:1px solid #2563eb!important;font-weight:600}.production-btn-payment{background:#2563eb!important;color:#fff!important;border:1px solid #1d4ed8!important;font-weight:700;cursor:pointer}.production-btn-payment:hover{background:#1d4ed8!important}.production-btn-payment-disabled{background:#2563eb!important;color:#fff!important;border:1px solid #2563eb!important;font-weight:600;cursor:not-allowed}.production-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}@media(max-width:700px){.production-info-grid{grid-template-columns:1fr}}
+</style>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+<body>
+<div class="app">
+<div id="sidebar-container"></div>
+<main class="main">
+<header class="topbar">
+<button type="button" class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+<div class="topbar-title"><div class="page-title">Vendor Produksi</div><div class="page-description">Daftar WO aktif dan input harga pekerja</div></div>
+<div class="topbar-right"><div class="date-display" id="currentDate">-</div></div>
+</header>
+
+<section class="content">
+<div class="toolbar">
+    <div><input id="searchProduction" type="search" placeholder="Cari WO / Customer / No. Polisi"></div>
+</div>
+
+<div class="panel production-list-panel">
+    <div class="panel-header"><div><h2>Daftar WO Vendor Produksi</h2><span>Semua WO yang belum lunas pembayaran Vendor Produksi, termasuk WO yang sudah CHECK OUT</span></div></div>
+    <div style="overflow:auto">
+        <table class="production-table">
+            <thead><tr>
+                <th>No</th><th>No. WO</th><th>Customer</th><th>No. Polisi</th><th>Mobil</th><th>Status</th>
+                <th>Ketok</th><th>Dempul</th><th>Cat</th><th>Poles</th><th>Total</th><th>Aksi</th>
+            </tr></thead>
+            <tbody id="productionTableBody"></tbody>
+        </table>
+    </div>
+</div>
+</section>
+</main>
+
+<div class="production-modal" id="productionPriceModal">
+<div class="production-modal-box">
+    <div class="production-modal-head"><h2>Input Harga Pekerja</h2><button class="production-close" type="button" id="btnCloseProductionModal">&times;</button></div>
+    <form id="productionPriceForm">
+        <input type="hidden" id="productionWOId">
+        <div class="production-info-grid">
+            <div><span>Nomor WO</span><strong id="productionWONumber">-</strong></div>
+            <div><span>Customer</span><strong id="productionCustomer">-</strong></div>
+        </div>
+        <div class="production-form-group">
+            <label for="workerName">Nama Pekerja *</label>
+            <input id="workerName" type="text" maxlength="120" required placeholder="Masukkan nama pekerja">
+        </div>
+        <div class="production-form-group">
+            <label for="workerType">Jenis Pekerjaan *</label>
+            <select id="workerType" required>
+                <option value="">Pilih Jenis Pekerjaan</option>
+                <option value="KETOK">Ketok</option>
+                <option value="DEMPUL">Dempul</option>
+                <option value="CAT">Cat</option>
+                <option value="POLES">Poles</option>
+            </select>
+        </div>
+        <div class="production-form-group">
+            <label for="workerPrice">Harga Pekerja *</label>
+            <input id="workerPrice" type="number" min="0" step="1" required placeholder="Masukkan harga pekerja">
+        </div>
+        <div class="production-actions">
+            <button type="button" class="btn-secondary" id="btnCancelProduction">Batal</button>
+            <button type="submit" class="btn-primary">Simpan Harga</button>
+        </div>
+    </form>
+</div>
+</div>
+<div class="production-modal" id="productionPaymentModal">
+<div class="production-modal-box">
+    <div class="production-modal-head"><h2>Pembayaran Vendor Produksi</h2><button class="production-close" type="button" id="btnCloseProductionPayment">&times;</button></div>
+    <form id="productionPaymentForm">
+        <input type="hidden" id="productionPaymentWOId">
+        <div class="production-info-grid">
+            <div><span>Nomor WO</span><strong id="productionPaymentWONumber">-</strong></div>
+            <div><span>Customer</span><strong id="productionPaymentCustomer">-</strong></div>
+            <div><span>Total yang Dibayar</span><strong id="productionPaymentTotal">Rp 0</strong></div>
+            <div><span>Status</span><strong>LUNAS setelah disimpan</strong></div>
+        </div>
+        <div class="production-form-group">
+            <label for="productionPaymentDate">Tanggal Pembayaran *</label>
+            <input id="productionPaymentDate" type="date" required>
+        </div>
+        <div class="production-form-group">
+            <label for="productionPaymentDescription">Keterangan</label>
+            <input id="productionPaymentDescription" type="text" maxlength="250" placeholder="Keterangan pembayaran (opsional)">
+        </div>
+        <div class="production-actions">
+            <button type="button" class="btn-secondary" id="btnCancelProductionPayment">Batal</button>
+            <button type="submit" class="btn-primary" id="btnSaveProductionPayment">Simpan Pembayaran / LUNAS</button>
+        </div>
+    </form>
+</div>
+</div>
+
+<script src="layout.js"></script>
+<script src="produksi.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.es-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}.es-table{width:100%;border-collapse:collapse;min-width:1100px}.es-table th,.es-table td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;white-space:nowrap;font-size:12px}.es-table th{background:#f8fafc;font-size:12px}.es-status{display:inline-block;padding:4px 8px;border-radius:999px;font-weight:700;font-size:11px}.es-status-paid{background:#dcfce7;color:#166534}.es-status-waiting{background:#fef3c7;color:#92400e}.es-empty{text-align:center;color:#6b7280;padding:32px!important}.es-info{margin-top:12px;color:#64748b;font-size:12px}.es-search{display:flex;gap:8px}.es-search input{width:min(420px,100%);padding:9px 11px;border:1px solid #d1d5db;border-radius:7px}.es-modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:3000}.es-modal.show{display:flex}.es-box{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:12px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.25)}.es-box h2{margin:0 0 16px}.es-work-section{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:10px 0}.es-work-section h3{margin:0 0 8px;font-size:14px}.es-work-section ol{margin:0;padding-left:24px}.es-work-section li{padding:5px 0;border-bottom:1px solid #f1f5f9}.es-work-section li:last-child{border-bottom:0}.es-no-item,.es-loading,.es-error{padding:10px;color:#64748b}.es-error{color:#b91c1c}.es-modal-actions{display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #e5e7eb;margin-top:16px;padding-top:14px}.es-close{float:right;border:0;background:transparent;font-size:26px;cursor:pointer}@media(max-width:800px){.es-box{padding:16px}}
+</style>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+<body>
+<div class="app">
+<div id="sidebar-container"></div>
+<main class="main">
+<header class="topbar"><button type="button" class="sidebar-toggle" onclick="toggleSidebar()" title="Buka/Tutup Menu">☰</button><div class="topbar-title"><div class="page-title">Estimasi Selesai</div><div class="page-description">Estimasi yang sudah dibuatkan Kuitansi Perbaikan</div></div><div class="topbar-right"><div class="date-display" id="currentDate">-</div></div></header>
+<section class="content">
+<div class="toolbar"><div class="es-search"><input id="searchEstimasiSelesai" type="search" placeholder="Cari nomor estimasi / WO / customer / no. polisi"></div></div>
+<div class="panel es-panel"><div class="panel-header"><div><h2>Daftar Estimasi Selesai</h2><span>Estimasi berpindah ke sini setelah Tagihan Kuitansi berhasil dibuat.</span></div></div><div style="overflow:auto"><table class="es-table"><thead><tr><th>No</th><th>No. Estimasi</th><th>No. WO</th><th>Tanggal</th><th>Customer</th><th>No. Polisi</th><th>Asuransi</th><th>No. Klaim</th><th>No. Polis</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="estimasiSelesaiBody"></tbody></table></div></div>
+<div class="es-info">Data yang sudah selesai tetap dapat dilihat sebagai riwayat dan tidak lagi muncul pada menu Estimasi aktif.</div>
+</section></main></div>
+<div class="es-modal" id="esModal"><div class="es-box"><button class="es-close" type="button" onclick="closeEsModal()">×</button><h2>Detail Pengerjaan</h2><div id="esDetail"></div><div class="es-modal-actions"><button type="button" class="btn-secondary" onclick="closeEsModal()">Tutup</button><button type="button" class="btn-primary" id="esPrintBtn">🖨 Print</button></div></div></div>
+<script src="layout.js"></script>
+<script src="estimasi-selesai.js?v=20260923-payment"></script>
+</body></html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* Tampilan Penerimaan Sparepart Supply */
+.supply-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.supply-table{width:100%;border-collapse:collapse}.supply-table th,.supply-table td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:12px}.supply-table th{background:#f8fafc}
+.supply-actions{display:flex;gap:7px;flex-wrap:wrap}
+.supply-modal{position:fixed;inset:0;background:rgba(15,23,42,.48);display:none;align-items:center;justify-content:center;padding:18px;z-index:3000;box-sizing:border-box}.supply-modal.show{display:flex}
+.supply-box{width:min(1180px,calc(100vw - 36px))!important;max-height:92vh;overflow:auto;background:#fff;border-radius:12px;padding:22px;box-sizing:border-box}
+.supply-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.supply-head h2{margin:0;font-size:18px}.supply-close{border:0;background:transparent;font-size:24px;cursor:pointer}
+.supply-info{display:grid!important;grid-template-columns:repeat(4,minmax(150px,1fr))!important;gap:10px!important;margin-bottom:18px!important;width:100%!important}.supply-info-item{min-width:0;border:1px solid #e5e7eb;border-radius:8px;padding:9px;background:#fff}.supply-info-label{font-size:11px;color:#6b7280}.supply-info-value{font-weight:600;font-size:13px;margin-top:3px;overflow-wrap:anywhere}
+.supply-detail{width:100%;border-collapse:collapse}.supply-detail th,.supply-detail td{padding:8px;border:1px solid #e5e7eb;font-size:12px;vertical-align:middle}.supply-detail th{background:#f8fafc}
+.supply-badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#fef3c7;color:#92400e;font-weight:700;font-size:11px}.supply-badge.done{background:#dcfce7;color:#166534}.supply-return-badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#fee2e2;color:#991b1b;font-weight:700;font-size:11px}.supply-return-reason{display:block;margin-top:5px;color:#991b1b;font-size:10px;line-height:1.35;max-width:180px}.supply-arrival-item.returned{background:#fff7ed;border-color:#fed7aa}.supply-link-btn{background:#2563eb!important;color:#fff!important;border:1px solid #2563eb!important}.supply-link-btn:hover{background:#1d4ed8!important;color:#fff!important;border-color:#1d4ed8!important}
+.supply-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.supply-empty{text-align:center;color:#6b7280;padding:30px!important}
+/* Input Kedatangan */
+.supply-arrival-form label{display:block;font-size:12px;font-weight:600;margin-bottom:6px}.supply-arrival-status{margin:0 0 12px;padding:11px 14px;border:1px solid #dbe3ea;border-radius:8px;background:#f8fafc;font-size:12px;font-weight:700}.supply-note{margin:10px 0;padding:10px 12px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:7px;font-size:12px}
+.supply-arrival-parts{border:1px solid #dbe3ea;border-radius:9px;margin-bottom:14px;max-height:52vh;overflow:auto;background:#f8fafc;padding:8px}
+.supply-arrival-item{display:block;padding:14px;margin:0 0 9px;border:1px solid #dbe3ea;border-radius:9px;background:#fff;font-size:12px;box-sizing:border-box}.supply-arrival-item:last-child{margin-bottom:0}.supply-arrival-item.done{background:#f0fdf4;border-color:#bbdfc8}
+.supply-arrival-check-row{display:flex;align-items:flex-start;gap:11px;cursor:pointer;margin:0!important;padding:0!important}.supply-arrival-check-row input[type=checkbox]{width:16px!important;height:16px!important;min-width:16px;margin:2px 0 0!important;accent-color:#2563eb}.supply-arrival-part-main{display:block;min-width:0;flex:1}.supply-arrival-part-name{display:block;font-size:13px;font-weight:700;color:#1f2937;line-height:1.35}.supply-arrival-part-meta{display:block;color:#6b7280;margin-top:3px;font-size:11px}.supply-arrival-state{display:inline-block;margin-top:5px;font-size:10px;font-weight:700;color:#92400e}.supply-arrival-item.done .supply-arrival-state{color:#166534}
+.supply-arrival-fields{display:grid!important;grid-template-columns:minmax(150px,.8fr) minmax(200px,1fr) minmax(260px,1.4fr)!important;gap:12px!important;margin:13px 0 0 27px!important}.supply-arrival-field{min-width:0}.supply-arrival-fields label{display:block;font-size:11px;font-weight:600;color:#475569;margin-bottom:5px}.supply-arrival-fields input{width:100%!important;height:38px;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;margin:0!important}.supply-arrival-fields input:focus{outline:none;border-color:#64748b;box-shadow:0 0 0 2px rgba(100,116,139,.12)}
+.ps-link-btn,.ps-actions .btn-primary,.ps-actions .btn-secondary,.supply-link-btn,.supply-actions .btn-primary,.supply-actions .btn-secondary{color:#000!important}
+@media(max-width:900px){.supply-info{grid-template-columns:repeat(2,minmax(0,1fr))!important}.supply-table{min-width:900px}.supply-box{padding:16px}.supply-arrival-fields{grid-template-columns:1fr 1fr!important}.supply-arrival-field.note-field{grid-column:1/-1}}
+@media(max-width:620px){.supply-modal{padding:8px}.supply-box{width:calc(100vw - 16px)!important;padding:14px}.supply-info{grid-template-columns:1fr!important}.supply-arrival-parts{padding:6px}.supply-arrival-item{padding:11px}.supply-arrival-fields{grid-template-columns:1fr!important;margin-left:0!important}.supply-arrival-field.note-field{grid-column:auto}}
+</style>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+<body>
+<div class="app">
+<div id="sidebar-container"></div>
+<main class="main">
+<header class="topbar">
+<button type="button" class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+<div class="topbar-title">
+<div class="page-title">Penerimaan Sparepart Supply</div>
+<div class="page-description">Penerimaan sparepart Supply dari supplier untuk WO aktif maupun CHECK OUT yang masih belum lengkap</div>
+</div>
+<div class="topbar-right"><div class="date-display" id="currentDate">-</div></div>
+</header>
+<section class="content">
+<div class="toolbar">
+<div>
+<h2>Daftar Penerimaan Sparepart Supply</h2>
+<p>Menampilkan WO aktif maupun CHECK OUT yang masih memiliki sparepart Supply yang belum diterima.</p>
+</div>
+</div>
+<div class="supply-panel">
+<div style="padding:14px 16px;border-bottom:1px solid #e5e7eb;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input id="searchPenerimaanSupply" type="search" placeholder="Cari WO / Estimasi / Customer / No. Polisi" style="width:100%;max-width:520px;padding:9px 11px;border:1px solid #d1d5db;border-radius:7px;box-sizing:border-box"><select id="filterKomplitPenerimaanSupply" style="padding:9px 11px;border:1px solid #d1d5db;border-radius:7px;background:#fff;box-sizing:border-box"><option value="SEMUA">SEMUA</option><option value="KOMPLIT">KOMPLIT</option><option value="BELUM_KOMPLIT">BELUM KOMPLIT</option></select></div>
+<div style="overflow:auto">
+<table class="supply-table">
+<thead><tr><th>NO</th><th>NO. WO</th><th>NO. ESTIMASI</th><th>CUSTOMER</th><th>NO. POLISI</th><th>ASURANSI</th><th>JUMLAH SPAREPART</th><th>STATUS KEDATANGAN</th><th>AKSI</th></tr></thead>
+<tbody id="supplyWOBody"></tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+</div>
+
+<div class="supply-modal" id="supplyDetailModal">
+<div class="supply-box">
+<div class="supply-head"><h2 id="supplyDetailTitle">Detail Penerimaan Sparepart Supply</h2><button class="supply-close" onclick="closeSupplyDetail()">×</button></div>
+<div id="supplyDetailInfo"></div>
+<div style="overflow:auto">
+<table class="supply-detail">
+<thead><tr><th>NO</th><th>NAMA SPAREPART</th><th>SKU / NO. PART</th><th>QTY</th><th>STATUS</th><th>TGL DATANG</th><th>SUPPLIER</th><th>KETERANGAN</th><th>AKSI</th></tr></thead>
+<tbody id="supplyDetailBody"></tbody>
+</table>
+</div>
+<div class="supply-modal-actions">
+<button type="button" class="btn-primary" onclick="openSupplyArrival(supplyWOId(supplyCurrentWO))">Input Kedatangan</button>
+<button class="btn-secondary" onclick="closeSupplyDetail()">Tutup</button>
+</div>
+</div>
+</div>
+
+<div class="supply-modal" id="supplyArrivalModal">
+<div class="supply-box" style="width:min(1100px,96vw);max-height:92vh;overflow:auto">
+<div class="supply-head"><h2>Input Kedatangan Sparepart Supply</h2><button class="supply-close" onclick="closeSupplyArrival()">×</button></div>
+<form class="supply-arrival-form" onsubmit="saveSupplyArrival(event)">
+<div id="supplyArrivalPartInfo" class="supply-info"></div>
+<div id="supplyArrivalStatus" class="supply-arrival-status"></div>
+<label>Pilih Sparepart yang Datang *</label>
+<div id="supplyArrivalParts" class="supply-arrival-parts"></div>
+<div class="supply-note">Centang hanya sparepart yang benar-benar datang. Tanggal kedatangan, <strong>supplier</strong>, dan keterangan diisi <strong>per sparepart</strong>. Sparepart yang tidak dicentang tetap BELUM DATANG.</div>
+<div class="supply-modal-actions">
+<button type="button" class="btn-secondary" onclick="closeSupplyArrival()">Batal</button>
+<button type="submit" class="btn-primary">Simpan</button>
+</div>
+</form>
+</div>
+</div>
+
+<script src="layout.js"></script>
+<script src="receipt-photos.js"></script><script src="penerimaan-sparepart-supply.js"></script>
+</body>
+</html>

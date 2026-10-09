@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tagihan Own Risk (OR) | MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.or-list-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.or-list-panel .panel-header{padding:20px 20px 0}
+.or-table{width:100%;border-collapse:collapse}
+.or-table th,.or-table td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;white-space:nowrap}
+.or-table th{background:#f8fafc;font-size:12px}
+.or-table td{font-size:12px}
+.or-actions{display:flex;gap:6px;flex-wrap:wrap}
+.or-status-lunas{display:inline-block;padding:4px 8px;border-radius:999px;background:#dcfce7;color:#166534;font-weight:700;font-size:11px}
+.or-status-belum{display:inline-block;padding:4px 8px;border-radius:999px;background:#fee2e2;color:#991b1b;font-weight:700;font-size:11px}
+.or-amount{font-weight:700;text-align:right!important}
+.or-modal{position:fixed;inset:0;background:rgba(15,23,42,.48);display:none;align-items:center;justify-content:center;padding:20px;z-index:3000}
+.or-modal.show{display:flex}
+.or-modal-box{width:min(560px,100%);background:#fff;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.2);padding:22px}
+.or-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.or-modal-head h2{margin:0;font-size:18px}
+.or-close{border:0;background:transparent;font-size:24px;cursor:pointer}
+.or-info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.or-info-item{border:1px solid #e5e7eb;border-radius:8px;padding:9px}
+.or-info-label{font-size:11px;color:#6b7280;margin-bottom:3px}
+.or-info-value{font-weight:600;font-size:13px}
+.or-form-group{margin-bottom:13px}
+.or-form-group label{display:block;font-weight:600;font-size:12px;margin-bottom:6px}
+.or-form-group input,.or-form-group select,.or-form-group textarea{width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid #d1d5db;border-radius:7px;background:#fff}
+.or-form-group textarea{min-height:75px;resize:vertical}
+.transfer-instruction{margin:-3px 0 13px;padding:10px 12px;border:1px solid #d1d5db;background:#f8fafc;border-radius:7px;font-size:12px;line-height:1.5;color:#111}
+.or-form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.or-history{margin-top:18px;border-top:1px solid #e5e7eb;padding-top:15px}
+.or-history h3{font-size:14px;margin:0 0 8px}
+.or-history table{width:100%;border-collapse:collapse;font-size:11px}
+.or-history th,.or-history td{padding:7px;border-bottom:1px solid #eef0f3;text-align:left}
+.or-empty{text-align:center;color:#6b7280;padding:30px!important}
+@media(max-width:800px){.or-info{grid-template-columns:1fr}.or-table{min-width:1050px}}
+.or-actions .btn-primary{color:#fff !important;}
+</style>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+<body>
+<div class="app">
+<div id="sidebar-container"></div>
+<main class="main">
+<header class="topbar">
+<button type="button" class="sidebar-toggle" onclick="toggleSidebar()" title="Buka/Tutup Menu">☰</button>
+<div class="topbar-title"><div class="page-title">Tagihan Own Risk (OR)</div><div class="page-description">Daftar WO status SELESAI / CHECK OUT dan pembayaran Own Risk</div></div>
+<div class="topbar-right"><div class="date-display" id="currentDate">-</div></div>
+</header>
+<section class="content">
+<div class="toolbar">
+<div><input id="searchOR" type="search" placeholder="Cari WO / Estimasi / Customer / No. Polisi"></div>
+</div>
+<div class="panel or-list-panel">
+<div class="panel-header"><div><h2>Daftar Tagihan Own Risk (OR)</h2><span>Nilai OR diambil dari Estimasi. Status pembayaran diperbarui setelah pembayaran disimpan.</span></div></div>
+<div style="overflow:auto">
+<table class="or-table">
+<thead><tr>
+<th>No</th><th>No. WO</th><th>No. Estimasi</th><th>Customer</th><th>No. Polisi</th><th>Asuransi</th><th>Total OR</th><th>Free OR</th><th>Harus Dibayar</th><th>Total Dibayar</th><th>Hutang / Sisa</th><th>Status</th><th>Aksi</th>
+</tr></thead>
+<tbody id="orTableBody"></tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+</div>
+<div class="or-modal" id="paymentModal">
+<div class="or-modal-box">
+<div class="or-modal-head"><h2>Pembayaran Own Risk (OR)</h2><button class="or-close" type="button" onclick="closePaymentModal()">×</button></div>
+<div class="or-info">
+<div class="or-info-item"><div class="or-info-label">No. WO</div><div class="or-info-value" id="payWONumber">-</div></div>
+<div class="or-info-item"><div class="or-info-label">Customer</div><div class="or-info-value" id="payCustomer">-</div></div>
+<div class="or-info-item"><div class="or-info-label">Total Nilai Own Risk (OR)</div><div class="or-info-value" id="payOwnRisk">Rp 0</div></div>
+<div class="or-info-item"><div class="or-info-label">Nilai Free</div><div class="or-info-value" id="payFree">Rp 0</div></div>
+<div class="or-info-item"><div class="or-info-label">Nilai Harus Dibayar</div><div class="or-info-value" id="payDue">Rp 0</div></div>
+<div class="or-info-item"><div class="or-info-label">Total Dibayar</div><div class="or-info-value" id="payTotalPaid">Rp 0</div></div>
+<div class="or-info-item"><div class="or-info-label">Hutang / Sisa</div><div class="or-info-value" id="payRemaining">Rp 0</div></div>
+</div>
+<form id="paymentForm">
+<div class="or-form-group"><label for="paymentMethod">Pembayaran Dengan</label><select id="paymentMethod" required><option value="">Pilih metode</option><option value="TUNAI">TUNAI</option><option value="DEBIT">DEBIT</option><option value="CREDIT">CREDIT</option><option value="QRIS">QRIS</option><option value="TRANSFER">TRANSFER</option></select></div>
+<div id="transferInstruction" class="transfer-instruction" style="display:none">Jika pembayaran dilakukan transfer, silakan ke Nomor Rekening <strong>BANK ABC</strong> No. <strong>XXXXXX</strong> atas Nama <strong>XXXXXXXXXXXXXXXXXXXXXXXX</strong>.</div>
+<div class="or-form-group"><label for="paymentFree">Nilai Free</label><input id="paymentFree" type="number" min="0" step="0.01" value="0"></div>
+<div class="or-form-group"><label for="paymentAmount">Nilai Dibayar</label><input id="paymentAmount" type="number" min="0" step="0.01" required></div>
+<div class="or-form-group"><label for="paymentDescription">Keterangan</label><textarea id="paymentDescription" placeholder="Keterangan pembayaran"></textarea></div>
+<div class="or-form-actions"><button type="button" class="btn-secondary" onclick="closePaymentModal()">Batal</button><button type="submit" class="btn-primary">Bayar</button></div>
+</form>
+<div class="or-history"><h3>Riwayat Pembayaran</h3><div style="overflow:auto"><table><thead><tr><th>Ke</th><th>Tanggal</th><th>Metode</th><th>Nilai</th><th>Keterangan</th></tr></thead><tbody id="paymentHistory"></tbody></table></div></div>
+</div>
+</div>
+<script src="layout.js"></script>
+<script src="tagihan-or.js"></script>
+</body>
+</html>

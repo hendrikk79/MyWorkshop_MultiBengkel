@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MyWorkshop</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.edit-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:18px}
+.edit-card h2{margin:0 0 6px}.edit-card p{margin:0 0 16px;color:#64748b;font-size:13px;line-height:1.5}
+.field{display:flex;flex-direction:column;gap:6px}.field input{box-sizing:border-box;width:100%;padding:9px 10px}
+.number-preview{margin-top:14px;padding:12px 14px;border-radius:8px;background:#f8fafc;border:1px solid #e5e7eb;line-height:1.7}
+.number-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700}
+.actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.navy-button{background:#2563eb !important;border:1px solid #2563eb !important;color:#fff !important;border-radius:6px;padding:8px 14px;font-weight:700;cursor:pointer}.navy-button:hover{background:#1d4ed8 !important;border-color:#1d4ed8 !important}
+.active-status{display:flex;align-items:center;gap:8px;margin-top:14px;font-weight:600}
+.active-status input[type="checkbox"]{width:20px;height:20px;min-width:20px;min-height:20px;margin:0;accent-color:#14213d}
+.bottom-actions{display:flex;justify-content:flex-end;margin-top:18px;padding-top:16px;border-top:1px solid #e5e7eb}
+.myworkshop-alert{position:fixed;inset:0;background:rgba(15,23,42,.52);display:none;align-items:center;justify-content:center;padding:20px;z-index:99999}
+.myworkshop-alert.show{display:flex}
+.myworkshop-alert-box{width:min(420px,100%);background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.28);padding:22px}
+.myworkshop-alert-box h3{margin:0 0 8px;color:#14213d;font-size:18px}
+.myworkshop-alert-box p{margin:0;color:#475569;line-height:1.5;white-space:pre-line}
+.myworkshop-alert-actions{display:flex;justify-content:flex-end;margin-top:18px}
+.myworkshop-alert-actions button{background:#2563eb;border:1px solid #2563eb;color:#fff;border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:700}
+@media(max-width:800px){.edit-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app"><div id="sidebar-container"></div><main class="main">
+<header class="topbar"><button class="sidebar-toggle" onclick="toggleSidebar()">☰</button><div class="topbar-title"><div class="page-title">Edit Bengkel</div><div class="page-description">Pengaturan data bengkel dan penomoran dokumen</div></div></header>
+<section class="content">
+<div id="notice"></div>
+<div class="edit-card"><h2 id="workshop-title">Edit Bengkel</h2><p>Perubahan disimpan untuk bengkel yang dipilih.</p>
+<form id="editWorkshopForm">
+<div class="edit-grid">
+<label class="field">Nama Bengkel<input name="name" required></label>
+<label class="field">Kode Identitas Dokumen<input name="document_code" maxlength="20" required></label>
+<label class="field">Telepon<input name="phone"></label>
+<label class="field">Email<input name="email" type="email"></label>
+<label class="field">Alamat<input name="address"></label>
+<label class="field">Catatan<input name="notes"></label>
+<label class="field">Logo Free Size<input name="logo_file" type="file" accept="image/png,image/jpeg,image/webp"><span id="logo-preview"></span></label>
+<label class="field">Logo 1:1 (untuk Dashboard)<input name="logo_square_file" type="file" accept="image/png,image/jpeg,image/webp"><span id="logo-square-preview"></span></label>
+</div>
+<label class="active-status"><input name="is_active" type="checkbox"> <span>Bengkel Aktif</span></label>
+<div class="actions" style="margin-top:16px"><button type="submit" class="navy-button">Simpan Data Bengkel</button></div>
+</form></div>
+
+<div class="edit-card"><h2>Penomoran Dokumen</h2><p>Format: <strong>YYMM + Kode Dokumen + Kode Identitas Dokumen + 0001</strong>. Tanpa pemisah. Nomor berlanjut sepanjang tahun dan reset ke 0001 pada tahun baru.</p>
+<div class="edit-grid">
+<div class="field"><label>Kode Identitas Dokumen</label><div id="numbering-identity" style="padding:9px 10px;border:1px solid #e5e7eb;border-radius:6px;background:#f8fafc;font-weight:700">-</div></div>
+<div class="field"><label>Nomor Urut</label><div style="padding:9px 10px;border:1px solid #e5e7eb;border-radius:6px;background:#f8fafc;font-weight:700">4 digit (0001)</div></div>
+<label class="field">Kode Estimasi (bebas jumlah digit)<input id="numbering-estimate" inputmode="numeric" value="01"></label>
+<label class="field">Kode WO (bebas jumlah digit)<input id="numbering-wo" inputmode="numeric" value="02"></label>
+<label class="field">Kode Kuitansi Tagihan (bebas jumlah digit)<input id="numbering-kuitansi" inputmode="numeric" value="03"></label>
+</div>
+<div id="numbering-preview" class="number-preview">Contoh: -</div>
+<div class="actions" style="margin-top:14px"><button type="button" id="save-numbering" class="navy-button">Simpan Penomoran</button></div>
+</div>
+<div class="bottom-actions"><button type="button" id="back-button" class="navy-button">Kembali ke Data Bengkel</button></div>
+</section></main></div>
+<div id="myworkshopAlert" class="myworkshop-alert" role="dialog" aria-modal="true" aria-labelledby="myworkshopAlertTitle">
+  <div class="myworkshop-alert-box">
+    <h3 id="myworkshopAlertTitle">Informasi</h3>
+    <p id="myworkshopAlertMessage"></p>
+    <div class="myworkshop-alert-actions"><button type="button" id="myworkshopAlertOk">OK</button></div>
+  </div>
+</div>
+<script src="layout.js"></script>
+<script>
+(function(){
+  const modal=document.getElementById('myworkshopAlert');
+  const message=document.getElementById('myworkshopAlertMessage');
+  const ok=document.getElementById('myworkshopAlertOk');
+  function close(){modal.classList.remove('show');}
+  ok.addEventListener('click',close);
+  modal.addEventListener('click',e=>{if(e.target===modal)close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape' && modal.classList.contains('show')) close();});
+  window.alert=function(text){message.textContent=String(text??'');modal.classList.add('show');};
+})();
+</script>
+<script src="super-admin-workshop-edit.js"></script>
+</body></html>

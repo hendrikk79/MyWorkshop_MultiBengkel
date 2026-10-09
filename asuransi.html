@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MyWorkshop</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- SIDEBAR -->
+
+    <div id="sidebar-container"></div>
+<!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <button
+                type="button"
+                class="sidebar-toggle"
+                onclick="toggleSidebar()"
+            >
+                ☰
+            </button>
+
+
+            <div class="topbar-title">
+
+                <div class="page-title">
+                    Asuransi
+                </div>
+
+                <div class="page-description">
+                    Master Data Asuransi MyWorkshop
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <div
+                    class="date-display"
+                    id="currentDate"
+                >
+                    -
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <div class="toolbar">
+
+                <div>
+
+                    <h2>
+                        Daftar Asuransi
+                    </h2>
+
+                    <p>
+                        Kelola Data Perusahaan Asuransi
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-primary"
+                    id="btnTambahAsuransi"
+                >
+                    + Tambah Asuransi
+                </button>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="table-card">
+
+
+                <div class="table-toolbar">
+
+                    <input
+                        type="text"
+                        id="searchAsuransi"
+                        class="search"
+                        placeholder="Cari kode, nama, alamat, atau No. Telepon..."
+                    >
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    No
+                                </th>
+
+                                <th>
+                                    Kode Asuransi
+                                </th>
+
+                                <th>
+                                    Nama Asuransi
+                                </th>
+
+                                <th>
+                                    Alias Asuransi
+                                </th>
+
+                                <th>
+                                    Alamat
+                                </th>
+
+                                <th>
+                                    No. Telepon
+                                </th>
+
+                                <th>
+                                    NPWP
+                                </th>
+
+                                <th>
+                                    Material : Labour
+                                </th>
+
+                                <th>
+                                    Catatan
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Aksi
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="asuransiTableBody"
+                        >
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- =========================================================
+     MODAL ASURANSI
+========================================================= -->
+
+<div
+    class="modal"
+    id="asuransiModal"
+    style="display:none;"
+>
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2 id="asuransiModalTitle">
+                    Tambah Asuransi
+                </h2>
+
+                <p>
+                    Masukkan data asuransi
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="close"
+                id="btnCloseAsuransi"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            id="asuransiForm"
+        >
+
+
+            <div class="modal-body">
+
+
+                <input
+                    type="hidden"
+                    id="asuransiId"
+                >
+
+
+                <!-- KODE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Kode Asuransi
+                    </label>
+
+                    <input
+                        type="text"
+                        id="asuransiCode"
+                        readonly
+                        placeholder="Otomatis"
+                    >
+
+                    <small>
+                        Kode asuransi dibuat otomatis oleh sistem.
+                    </small>
+
+                </div>
+
+
+                <!-- NAMA -->
+
+                <div class="form-group">
+
+                    <label>
+                        Nama Asuransi *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="asuransiName"
+                        required
+                        maxlength="200"
+                        placeholder="Masukkan nama perusahaan asuransi"
+                    >
+
+                </div>
+
+
+                <!-- ALIAS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Alias Asuransi
+                    </label>
+
+                    <input
+                        type="text"
+                        id="asuransiAlias"
+                        maxlength="50"
+                        placeholder="Contoh: MALACCA / HARTA"
+                    >
+
+                    <small>
+                        Digunakan hanya pada Daftar Estimasi dan Daftar WO. Dokumen tetap menggunakan nama asuransi lengkap.
+                    </small>
+
+                </div>
+
+
+                <!-- NPWP -->
+
+                <div class="form-group">
+
+                    <label>
+                        NPWP
+                    </label>
+
+                    <input
+                        type="text"
+                        id="asuransiNpwp"
+                        maxlength="30"
+                        placeholder="Masukkan NPWP asuransi"
+                    >
+
+                </div>
+
+
+                <!-- MATERIAL : LABOUR -->
+
+                <div class="form-group">
+
+                    <label>
+                        Split Material : Labour
+                    </label>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <input
+                            type="number"
+                            id="asuransiMaterialPercent"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value="0"
+                            placeholder="Material %"
+                        >
+                        <input
+                            type="number"
+                            id="asuransiLabourPercent"
+                            value="100"
+                            readonly
+                            placeholder="Labour %"
+                            title="Otomatis = 100% - Material"
+                        >
+                    </div>
+
+                    <small>
+                        Persentase ini menjadi pakem Material : Labour pada Estimasi saat asuransi dipilih.
+                    </small>
+
+                </div>
+
+
+                <!-- ALAMAT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Alamat
+                    </label>
+
+                    <textarea
+                        id="asuransiAddress"
+                        rows="3"
+                        maxlength="500"
+                        placeholder="Masukkan alamat asuransi"
+                    ></textarea>
+
+                </div>
+
+
+                <!-- TELEPON -->
+
+                <div class="form-group">
+
+                    <label>
+                        No. Telepon
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="asuransiPhone"
+                        maxlength="30"
+                        placeholder="Contoh: 02112345678"
+                    >
+
+                </div>
+
+
+                <!-- CATATAN -->
+
+                <div class="form-group">
+
+                    <label>
+                        Catatan
+                    </label>
+
+                    <textarea
+                        id="asuransiNotes"
+                        rows="3"
+                        maxlength="500"
+                        placeholder="Catatan asuransi (opsional)"
+                    ></textarea>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select
+                        id="asuransiStatus"
+                    >
+
+                        <option value="1">
+                            Aktif
+                        </option>
+
+                        <option value="0">
+                            Tidak Aktif
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    id="asuransiMessage"
+                    class="form-message"
+                ></div>
+
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    id="btnBatalAsuransi"
+                >
+                    Batal
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    id="btnSimpanAsuransi"
+                >
+                    Simpan Asuransi
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script src="layout.js"></script>
+<script src="asuransi.js"></script>
+
+
+</body>
+
+</html>

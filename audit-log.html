@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>MyWorkshop</title><link rel="stylesheet" href="style.css">
+<style>
+.audit-toolbar{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:10px;align-items:end}
+.audit-toolbar label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px}
+.audit-toolbar input,.audit-toolbar select{width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;background:#fff}
+.audit-toolbar .actions{display:flex;gap:8px}
+.audit-table-wrap{overflow:auto;margin-top:16px}.audit-table{width:100%;border-collapse:collapse;font-size:13px}.audit-table th,.audit-table td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top;white-space:nowrap}.audit-table th{background:#f8fafc;color:#475569}.muted{color:#64748b}.empty{text-align:center;padding:30px;color:#64748b}
+@media(max-width:1000px){.audit-toolbar{grid-template-columns:repeat(3,minmax(130px,1fr))}}@media(max-width:650px){.audit-toolbar{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app"><div id="sidebar-container"></div><main class="main">
+<header class="topbar"><button class="sidebar-toggle" onclick="toggleSidebar()" type="button">☰</button><div class="topbar-title"><div class="page-title">Audit Log</div><div class="page-description">Riwayat aktivitas penting sistem</div></div></header>
+<section class="content"><div class="panel" style="padding:24px">
+<h2 style="margin:0 0 6px">Audit Log</h2><p class="muted" style="margin:0 0 18px">Riwayat aktivitas tersimpan dan tidak menyediakan tombol edit atau hapus.</p>
+<div class="audit-toolbar">
+<div><label>Bengkel</label><select id="filterWorkshop"><option value="">Semua Bengkel</option></select></div>
+<div><label>User</label><select id="filterUser"><option value="">Semua User</option></select></div>
+<div><label>Modul</label><select id="filterModule"><option value="">Semua Modul</option><option>User & Akses</option><option>Data Bengkel</option><option>Pengaturan Sistem</option><option>Super Admin</option><option>Estimasi</option><option>WO</option><option>Tagihan</option><option>Pembayaran</option><option>Laporan</option><option>Sparepart/Gudang</option><option>Produksi</option><option>Customer</option></select></div>
+<div><label>Aktivitas</label><input id="filterAction" placeholder="Cari aktivitas..."></div>
+<div><label>Dari Tanggal</label><input id="filterFrom" type="date"></div>
+<div><label>Sampai Tanggal</label><input id="filterTo" type="date"></div>
+<div class="actions"><button id="btnFilter" type="button" class="btn btn-primary">Tampilkan</button><button id="btnReset" type="button" class="btn">Reset</button></div>
+</div>
+<div class="audit-table-wrap"><table class="audit-table"><thead><tr><th>Tanggal & Waktu</th><th>User</th><th>Role</th><th>Bengkel</th><th>Aktivitas</th><th>Modul</th><th>Detail</th><th>IP</th></tr></thead><tbody id="auditBody"><tr><td colspan="8" class="empty">Memuat Audit Log...</td></tr></tbody></table></div>
+</div></section></main></div>
+<script src="layout.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+let workshops=[], users=[];
+async function json(url){const r=await fetch(url,{credentials:'same-origin'});const j=await r.json();if(!r.ok||j.success===false)throw new Error(j.message||'Gagal memuat data.');return j;}
+async function loadRefs(){
+ try{const w=await json('/api/super-admin/workshops');workshops=w.data||[];$('filterWorkshop').innerHTML='<option value="">Semua Bengkel</option>'+workshops.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');}catch(e){}
+ try{const u=await json('/api/users');users=u.data||[];$('filterUser').innerHTML='<option value="">Semua User</option>'+users.map(x=>`<option value="${x.id}">${esc(x.full_name||x.username)}${x.workshop_name?' — '+esc(x.workshop_name):''}</option>`).join('');}catch(e){}
+}
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+async function load(){const p=new URLSearchParams();[['workshop_id','filterWorkshop'],['user_id','filterUser'],['module','filterModule'],['action','filterAction'],['from','filterFrom'],['to','filterTo']].forEach(([k,id])=>{const v=$(id).value.trim();if(v)p.set(k,v)});const body=$('auditBody');body.innerHTML='<tr><td colspan="8" class="empty">Memuat...</td></tr>';try{const j=await json('/api/super-admin/audit-logs?'+p.toString());const d=j.data||[];body.innerHTML=d.length?d.map(x=>`<tr><td>${esc(formatDate(x.created_at))}</td><td><b>${esc(x.user_full_name||'Sistem')}</b><br><span class="muted">${esc(x.username)}</span></td><td>${esc(x.role_name||'-')}</td><td>${esc(x.workshop_name||'-')}</td><td>${esc(x.action||'-')}</td><td>${esc(x.module||'-')}</td><td>${esc(x.detail||'-')}</td><td>${esc(x.ip_address||'-')}</td></tr>`).join(''):'<tr><td colspan="8" class="empty">Belum ada aktivitas yang sesuai filter.</td></tr>';}catch(e){body.innerHTML=`<tr><td colspan="8" class="empty">${esc(e.message)}</td></tr>`;}}
+function formatDate(v){if(!v)return '-';const d=new Date(String(v).replace(' ','T')+'+07:00');return isNaN(d)?v:d.toLocaleString('id-ID');}
+$('btnFilter').onclick=load;$('btnReset').onclick=()=>{['filterWorkshop','filterUser','filterModule','filterAction','filterFrom','filterTo'].forEach(id=>$(id).value='');load();};
+loadRefs().then(load);
+})();
+</script>
+</body></html>
