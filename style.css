@@ -196,15 +196,39 @@ button {
 }
 
 .menu-section {
-    margin: 13px 12px 8px;
-
-    color: #7f8ca3;
-
-    font-size: 10px;
-
-    font-weight: bold;
-
+    /* Menu utama memakai bentuk yang konsisten dengan tombol Dashboard. */
+    box-sizing: border-box;
+    min-height: 34px;
+    margin: 7px 0 5px;
+    padding: 0 11px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
+}
+
+/* Judul kelompok menu bukan tombol navigasi; jangan beri efek hover biru tambahan. */
+.menu-section:not(.main-menu-toggle) {
+    display: flex;
+    align-items: center;
+}
+
+.menu-section.main-menu-toggle {
+    min-height: 34px;
+    margin: 7px 0 5px;
+    padding: 0 11px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+}
+
+.menu-section.main-menu-toggle:hover,
+.menu-section.main-menu-toggle:focus-visible {
+    background: #2563eb;
+    color: #fff;
+    outline-offset: 2px;
 }
 
 .menu-item {
@@ -1518,3 +1542,141 @@ button.estimasi-action-history:hover:not(:disabled) {
     color: #000 !important;
     border-color: #9ca3af !important;
 }
+
+
+/* =========================================================
+   ESTIMASI - TOMBOL AKSI LEBIH RINGKAS
+   Perubahan terbatas pada tombol aksi di kolom Aksi Daftar Estimasi.
+========================================================= */
+.estimasi-action-edit,
+.estimasi-action-print,
+.estimasi-action-history,
+.estimasi-action-delete {
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 10px !important;
+    font-size: 11px !important;
+    line-height: 28px !important;
+    border-radius: 6px !important;
+    min-width: 0 !important;
+    width: auto !important;
+    flex: 0 0 auto !important;
+    white-space: nowrap;
+}
+
+
+/* MyWorkshop symbol set: consistent monochrome outline icons */
+.menu-icon img { width:21px; height:21px; object-fit:contain; display:block; flex:0 0 21px; }
+.menu-icon { width:30px; min-width:30px; }
+.menu-action-icon { width:18px; height:18px; object-fit:contain; vertical-align:middle; margin-right:7px; }
+button .mw-button-icon { width:17px; height:17px; object-fit:contain; vertical-align:-3px; margin-right:6px; }
+
+/* MyWorkshop: pastikan seluruh ikon/simbol sidebar tampil putih, termasuk emoji lama dan file gambar. */
+.sidebar .menu-icon {
+    filter: grayscale(1) brightness(0) invert(1) !important;
+}
+.sidebar .menu-icon img,
+.sidebar .menu-icon svg {
+    filter: grayscale(1) brightness(0) invert(1) !important;
+}
+
+
+/* MYWORKSHOP: warna tombol seragam biru, pengecualian batal/tutup/X/hapus merah. */
+button.mw-cancel-button,
+button[aria-label="Close"], button[aria-label="close"],
+button[title="Close"], button[title="close"],
+button.mw-delete-button, button.btn-delete, button.btn-danger,
+button.mobil-masuk-delete, button.estimasi-action-delete, button.user-btn.danger {
+    background: #dc2626 !important; color: #fff !important; border-color: #dc2626 !important;
+}
+button.mw-cancel-button:hover:not(:disabled),
+button[aria-label="Close"]:hover:not(:disabled), button[aria-label="close"]:hover:not(:disabled),
+button[title="Close"]:hover:not(:disabled), button[title="close"]:hover:not(:disabled),
+button.mw-delete-button:hover:not(:disabled), button.btn-delete:hover:not(:disabled),
+button.btn-danger:hover:not(:disabled), button.mobil-masuk-delete:hover:not(:disabled),
+button.estimasi-action-delete:hover:not(:disabled), button.user-btn.danger:hover:not(:disabled) {
+    background: #b91c1c !important; color: #fff !important; border-color: #b91c1c !important;
+}
+/* Semua ikon gambar pada tombol berwarna putih; filter hanya mengenai ikon, bukan teks. */
+button .mw-button-icon, a[role="button"] .mw-button-icon, .btn .mw-button-icon {
+    width: 17px !important; height: 17px !important; object-fit: contain !important;
+    vertical-align: -3px !important; margin-right: 6px !important;
+    filter: grayscale(1) brightness(0) invert(1) !important;
+}
+.sidebar .menu-icon, .sidebar .menu-icon img, .sidebar .menu-icon svg {
+    filter: grayscale(1) brightness(0) invert(1) !important;
+}
+
+
+/* =========================================================
+   MYWORKSHOP - STANDARD BUTTON & SYMBOL SYSTEM
+   Symbols sourced from frontend/symbol; destructive actions red.
+========================================================= */
+button,
+.btn,
+.button,
+a.btn,
+a.button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"] {
+    background-color: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+}
+button:hover,
+.btn:hover,
+.button:hover,
+a.btn:hover,
+a.button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+[role="button"]:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+    color: #fff;
+}
+.mw-button-danger,
+.mw-button-danger:hover,
+button.mw-button-danger,
+.btn.mw-button-danger,
+a.btn.mw-button-danger,
+[role="button"].mw-button-danger {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: #fff !important;
+}
+.mw-button-danger:hover,
+button.mw-button-danger:hover,
+.btn.mw-button-danger:hover,
+a.btn.mw-button-danger:hover,
+[role="button"].mw-button-danger:hover {
+    background-color: #b91c1c !important;
+    border-color: #b91c1c !important;
+}
+.mw-symbol-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    vertical-align: middle;
+}
+.mw-button-symbol {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    vertical-align: middle;
+    pointer-events: none;
+}
+
+
+/* MyWorkshop: konsistensi ikon batal/tutup modal dan tombol keluar sidebar */
+.modal .mw-modal-close-symbol { width: 18px !important; height: 18px !important; object-fit: contain !important; filter: brightness(0) invert(1) !important; }
+.sidebar .logout-button { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.sidebar .logout-button .menu-action-icon { display: inline-block; width: 18px; height: 18px; margin: 0 !important; filter: brightness(0) invert(1) !important; }
+.sidebar .logout-button .mw-button-symbol { display: none !important; }

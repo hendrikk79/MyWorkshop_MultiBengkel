@@ -41,6 +41,13 @@
 </style>
     <link rel="icon" type="image/png" href="favicon.png">
 
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 <body>
 <div class="app">
@@ -73,5 +80,6 @@
 <div class="ps-note"><strong>Checkpoint:</strong> centang hanya sparepart yang benar-benar datang. Jika checkpoint tidak dicentang, sparepart tetap berstatus <strong>BELUM DATANG</strong>. Tanggal kedatangan dan keterangan diisi <strong>per sparepart</strong>. Tanggal kedatangan dan keterangan diisi <strong>per sparepart</strong>. Sparepart yang tidak dicentang tetap BELUM DATANG.</div><div class="ps-modal-actions"><button type="button" class="btn-secondary" onclick="closePSArrival()">Batal</button><button type="submit" class="btn-primary">Simpan</button></div></form></div></div>
 <script src="layout.js"></script>
 <script src="receipt-photos.js"></script><script src="permintaan-sparepart.js"></script>
+<script src="button-symbols.js"></script>
 </body>
 </html>

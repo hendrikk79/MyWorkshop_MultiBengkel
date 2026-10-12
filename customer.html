@@ -19,6 +19,13 @@
 
     <link rel="icon" type="image/png" href="favicon.png">
 
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 
 
@@ -370,6 +377,7 @@
 <script src="layout.js"></script>
 <script src="customer.js"></script>
 
+<script src="button-symbols.js"></script>
 </body>
 
 </html>

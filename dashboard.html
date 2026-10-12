@@ -145,6 +145,13 @@
 @media(max-width:700px){.dashboard-welcome-modern{padding:18px;gap:14px;align-items:flex-start;flex-direction:column}.dashboard-welcome-copy{padding-right:0}.dashboard-live-clock{width:100%;flex-basis:auto;box-sizing:border-box}}
 </style>
 
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 
 
@@ -640,6 +647,7 @@
 
 <div id="dashboardBillingValueTooltip" class="billing-value-tooltip" role="tooltip" aria-hidden="true"></div>
 
+<script src="button-symbols.js"></script>
 </body>
 
 </html>

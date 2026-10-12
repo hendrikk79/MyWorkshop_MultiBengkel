@@ -5,13 +5,127 @@
 (function () {
     "use strict";
 
+    // Loading screen bersama: tampilkan identitas MyWorkshop yang konsisten
+    // selama sesi, hak akses, layout, dan permintaan data awal disiapkan.
+    function ensureMyWorkshopLoadingScreen() {
+        if (!document.getElementById("mwLoadingScreen")) {
+            const style = document.createElement("style");
+            style.id = "mwLoadingScreenStyle";
+            style.textContent = `
+                #mwLoadingScreen {
+                    position: fixed; inset: 0; z-index: 2147483647;
+                    display: flex; align-items: center; justify-content: center;
+                    background: #111827; color: #fff; opacity: 1;
+                    transition: opacity 180ms ease; box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                }
+                #mwLoadingScreen.mw-loading-leave { opacity: 0; pointer-events: none; }
+                #mwLoadingScreen .mw-loading-inner {
+                    width: min(320px, calc(100vw - 40px)); display: flex;
+                    flex-direction: column; align-items: center; text-align: center;
+                }
+                #mwLoadingScreen .mw-loading-logo {
+                    width: 64px; height: 64px; display: flex; align-items: center;
+                    justify-content: center; border-radius: 12px; background: #2563eb;
+                    margin-bottom: 16px; box-shadow: 0 8px 22px rgba(37,99,235,.24);
+                }
+                #mwLoadingScreen .mw-loading-logo svg { width: 32px; height: 32px; display:block; }
+                #mwLoadingScreen .mw-loading-title { margin: 0; color: #fff; font-size: 26px; line-height: 1.2; font-weight: 700; letter-spacing: .1px; }
+                #mwLoadingScreen .mw-loading-subtitle { margin-top: 8px; color: #cbd5e1; font-size: 13px; line-height: 1.45; }
+                #mwLoadingScreen .mw-loading-track { width: 200px; height: 5px; margin-top: 28px; overflow: hidden; border-radius: 999px; background: #374151; }
+                #mwLoadingScreen .mw-loading-progress { width: 42%; height: 100%; border-radius: inherit; background: #60a5fa; animation: mwLoadingSweep 1.15s ease-in-out infinite; transform-origin: left center; }
+                #mwLoadingScreen .mw-loading-caption { margin-top: 10px; color: #d1d5db; font-size: 12px; line-height: 1.4; }
+                @keyframes mwLoadingSweep { 0% { transform: translateX(-110%) scaleX(.72); } 55% { transform: translateX(105%) scaleX(1); } 100% { transform: translateX(270%) scaleX(.72); } }
+                @media (prefers-reduced-motion: reduce) { #mwLoadingScreen, #mwLoadingScreen .mw-loading-progress { transition: none; animation: none; } #mwLoadingScreen .mw-loading-progress { width: 65%; } }
+            `;
+            document.head.appendChild(style);
+            const screen = document.createElement("div");
+            screen.id = "mwLoadingScreen";
+            screen.setAttribute("role", "status");
+            screen.setAttribute("aria-live", "polite");
+            screen.innerHTML = `
+                <div class="mw-loading-inner">
+                    <div class="mw-loading-logo" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14.7 6.3a5 5 0 0 0-6.4 6.4L3.5 17.5a2.1 2.1 0 0 0 3 3l4.8-4.8a5 5 0 0 0 6.4-6.4l-3.1 3.1-3.1-3.1 3.2-3z"/>
+                        </svg>
+                    </div>
+                    <h1 class="mw-loading-title">MyWorkshop</h1>
+                    <div class="mw-loading-subtitle">Body Repair Management System</div>
+                    <div class="mw-loading-track" aria-hidden="true"><div class="mw-loading-progress"></div></div>
+                    <div class="mw-loading-caption">Memuat aplikasi...</div>
+                </div>`;
+            // Letakkan sebagai anak langsung body agar tetap terlihat ketika
+            // konten halaman ditahan oleh mw-startup-pending.
+            (document.body || document.documentElement).prepend(screen);
+        }
+    }
+    ensureMyWorkshopLoadingScreen();
+
+    // Startup gate: cegah HTML default/draf terlihat sebelum identitas,
+    // sidebar, hak akses, dan permintaan data awal selesai disiapkan.
+    let startupReady = false;
+    let startupRequests = 0;
+    let startupQuietTimer = null;
+    let startupFallbackTimer = null;
+    const nativeFetch = window.fetch ? window.fetch.bind(window) : null;
+
+    if (nativeFetch && !window.__mwStartupFetchWrapped) {
+        window.__mwStartupFetchWrapped = true;
+        window.fetch = function (...args) {
+            const requestUrl = typeof args[0] === "string" ? args[0] : (args[0]?.url || "");
+            const counted = /^\/api\//i.test(requestUrl) || /^https?:\/\//i.test(requestUrl);
+            if (counted) {
+                startupRequests++;
+                if (startupQuietTimer) { clearTimeout(startupQuietTimer); startupQuietTimer = null; }
+            }
+            let result;
+            try { result = nativeFetch(...args); }
+            catch (error) {
+                if (counted) { startupRequests = Math.max(0, startupRequests - 1); scheduleStartupReveal(); }
+                throw error;
+            }
+            return Promise.resolve(result).finally(function () {
+                if (counted) { startupRequests = Math.max(0, startupRequests - 1); scheduleStartupReveal(); }
+            });
+        };
+    }
+
+    function revealStartup() {
+        if (startupReady) return;
+        startupReady = true;
+        if (startupQuietTimer) clearTimeout(startupQuietTimer);
+        if (startupFallbackTimer) clearTimeout(startupFallbackTimer);
+        const loadingScreen = document.getElementById("mwLoadingScreen");
+        if (loadingScreen) loadingScreen.classList.add("mw-loading-leave");
+        // Buka halaman setelah transisi singkat agar konten final muncul utuh.
+        setTimeout(() => {
+            document.documentElement.classList.remove("mw-startup-pending");
+            if (loadingScreen) loadingScreen.remove();
+        }, 180);
+    }
+
+    function scheduleStartupReveal() {
+        if (!window.__mwStartupLayoutReady || startupRequests > 0 || startupReady) return;
+        if (startupQuietTimer) clearTimeout(startupQuietTimer);
+        startupQuietTimer = setTimeout(revealStartup, 180);
+    }
+
+    function markStartupLayoutReady() {
+        window.__mwStartupLayoutReady = true;
+        scheduleStartupReveal();
+        // Jangan sampai halaman tertutup permanen bila sebuah API lambat/gagal.
+        if (!startupFallbackTimer) startupFallbackTimer = setTimeout(revealStartup, 3500);
+    }
+
     const MAIN_MENU_NAMES = [
         "REGISTRASI",
         "TRANSAKSI",
         "PRODUKSI",
         "SPAREPART / GUDANG",
         "BILLING",
-        "LAPORAN"
+        "LAPORAN",
+        "USER & ROLE"
     ];
 
     function normalize(text) {
@@ -502,7 +616,6 @@
             case "MONITORING": return "super-admin";
             case "AKUN": return "super-admin";
             case "USER & ROLE": return "master";
-            case "UTAMA": return "dashboard";
             default: return "";
         }
     }
@@ -722,6 +835,7 @@
         if (!sidebarContainer) {
             await ensureImpersonationBanner();
             setActiveMenu();
+            markStartupLayoutReady();
             return;
         }
 
@@ -753,7 +867,11 @@
                 const script = document.createElement("script");
                 script.src = "/app.js";
                 script.dataset.myworkshopApp = "true";
+                script.onload = function () { markStartupLayoutReady(); };
+                script.onerror = function () { markStartupLayoutReady(); };
                 document.body.appendChild(script);
+            } else {
+                markStartupLayoutReady();
             }
 
             // Fallback handler: tombol Keluar tidak bergantung pada handler
@@ -780,6 +898,7 @@
         } catch (error) {
             console.error("Gagal memuat sidebar:", error);
             sidebarContainer.innerHTML = '<div style="padding:20px;color:#dc2626;font-size:13px">Gagal memuat sidebar.</div>';
+            markStartupLayoutReady();
         }
     }
 

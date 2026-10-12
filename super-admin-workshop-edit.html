@@ -27,6 +27,13 @@
 .myworkshop-alert-actions button{background:#2563eb;border:1px solid #2563eb;color:#fff;border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:700}
 @media(max-width:800px){.edit-grid{grid-template-columns:1fr}}
 </style>
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 <body>
 <div class="app"><div id="sidebar-container"></div><main class="main">
@@ -83,4 +90,5 @@
 })();
 </script>
 <script src="super-admin-workshop-edit.js"></script>
+<script src="button-symbols.js"></script>
 </body></html>

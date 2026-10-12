@@ -12,6 +12,13 @@
 .audit-table-wrap{overflow:auto;margin-top:16px}.audit-table{width:100%;border-collapse:collapse;font-size:13px}.audit-table th,.audit-table td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top;white-space:nowrap}.audit-table th{background:#f8fafc;color:#475569}.muted{color:#64748b}.empty{text-align:center;padding:30px;color:#64748b}
 @media(max-width:1000px){.audit-toolbar{grid-template-columns:repeat(3,minmax(130px,1fr))}}@media(max-width:650px){.audit-toolbar{grid-template-columns:1fr}}
 </style>
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 <body>
 <div class="app"><div id="sidebar-container"></div><main class="main">
@@ -46,4 +53,5 @@ $('btnFilter').onclick=load;$('btnReset').onclick=()=>{['filterWorkshop','filter
 loadRefs().then(load);
 })();
 </script>
+<script src="button-symbols.js"></script>
 </body></html>

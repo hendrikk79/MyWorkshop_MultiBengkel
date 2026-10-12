@@ -4135,7 +4135,7 @@ function renderEstimasi() {
                             item.id
                         )}"
                     >
-                        Edit
+                        ✏️Edit
                     </button>
 
 
@@ -4146,7 +4146,7 @@ function renderEstimasi() {
                             item.id
                         )}"
                     >
-                        Print
+                        🖨️Print
                     </button>
 
 
@@ -4157,7 +4157,7 @@ function renderEstimasi() {
                             item.id
                         )}"
                     >
-                        Detail
+                        📎Detail
                     </button>
 
 
@@ -4166,7 +4166,7 @@ function renderEstimasi() {
                         class="btn-secondary estimasi-action-delete"
                         data-delete="${escapeHtml(item.id)}"
                     >
-                        Hapus
+                        🗑Hapus
                     </button>` : ""}
 
                 </td>
@@ -4442,7 +4442,6 @@ async function printEstimasi(
             : "Atas Lengkap";
 
 
-    // Nilai diskon pada database lama dapat tersimpan sebagai nominal
     // (discount/discount_amount), sedangkan input Estimasi memakai persen.
     // Saat print, selalu turunkan kembali persentasenya dari nilai bruto
     // jika field discountPercent belum tersedia.
@@ -5071,6 +5070,14 @@ td {
 
     }
 
+    /* Subtotal section harus tampil satu kali, setelah item terakhir,
+       bukan diulang sebagai footer pada setiap halaman cetak. */
+    .section table tfoot {
+
+        display: table-row-group;
+
+    }
+
 }
 
 </style>
@@ -5422,7 +5429,7 @@ td {
                         Nama Panel
                     </th>
 
-                    <th width="25%">
+                    <th width="15%">
                         Jenis
                     </th>
 
@@ -5430,11 +5437,11 @@ td {
                         Harga
                     </th>
 
-                    <th width="14%">
+                    <th width="10%">
                         Diskon (%)
                     </th>
 
-                    <th width="22%">
+                    <th width="18%">
                         Jumlah
                     </th>
 

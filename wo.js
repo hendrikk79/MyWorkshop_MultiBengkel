@@ -289,6 +289,9 @@ function loadEstimasiSelect(selectedId = "", keyword = "") {
 
     const q = String(keyword || search?.value || "").trim().toLowerCase();
     const filtered = estimasiData.filter(item => {
+        const id = getId(item);
+        // Estimasi yang sudah terhubung ke WO tidak ditawarkan untuk pembuatan WO baru.
+        if (used.has(id)) return false;
         if (!q) return true;
         return getEstimasiSearchText(item).includes(q);
     });
@@ -580,43 +583,83 @@ async function openSparepartInfo(id) {
            </div>`
         : `<div class="wo-sparepart-summary complete"><strong>TIDAK ADA SPAREPART</strong><span>WO ini tidak memiliki data sparepart.</span></div>`;
 
-    let receiptPhotoKeys = {};
+    const wid = getWOId(item);
+    let poItems = [];
+    let supplyArrivals = [];
     try {
-        const wid = getWOId(item);
         const [poRes, supplyRes] = await Promise.all([
-            fetch('/api/storage/purchase_orders',{cache:'no-store'}).then(r=>r.json()),
-            fetch('/api/storage/supply_arrivals',{cache:'no-store'}).then(r=>r.json())
+            fetch('/api/storage/purchase_orders', { cache: 'no-store' }).then(r => r.ok ? r.json() : ({})),
+            fetch('/api/storage/supply_arrivals', { cache: 'no-store' }).then(r => r.ok ? r.json() : ({}))
         ]);
         const pos = Array.isArray(poRes?.data) ? poRes.data : [];
-        const po = pos.find(x=>String(x?.wo_id ?? x?.woId ?? x?.work_order_id ?? '')===String(wid));
-        (Array.isArray(po?.items)?po.items:[]).forEach((entry,idx)=>{const k=entry?.estimate_sparepart_id ?? entry?.item_id ?? entry?.itemId ?? idx; if(entry?.photo_key) receiptPhotoKeys[String(k)]=entry.photo_key;});
-        const arrivals = Array.isArray(supplyRes?.data) ? supplyRes.data : [];
-        arrivals.filter(x=>String(x?.wo_id ?? x?.woId ?? '')===String(wid)).forEach((entry,idx)=>{if(entry?.photo_key) receiptPhotoKeys[String(entry?.item_id ?? entry?.itemId ?? entry?.item_index ?? idx)]=entry.photo_key;});
-    } catch(e) { console.warn('Tidak dapat memuat foto penerimaan sparepart',e); }
+        const po = pos.find(x => String(x?.wo_id ?? x?.woId ?? x?.work_order_id ?? '') === String(wid));
+        poItems = Array.isArray(po?.items) ? po.items : [];
+        supplyArrivals = (Array.isArray(supplyRes?.data) ? supplyRes.data : []).filter(x =>
+            String(x?.wo_id ?? x?.woId ?? x?.work_order_id ?? '') === String(wid)
+        );
+    } catch (e) {
+        console.warn('Tidak dapat memuat data foto penerimaan sparepart', e);
+    }
+
+    const norm = value => String(value ?? '').trim().toLowerCase();
+    const itemId = sp => sp?.id ?? sp?.estimate_sparepart_id ?? sp?.item_id ?? sp?.itemId ?? null;
+    const itemName = sp => sp?.part_name ?? sp?.partName ?? sp?.name ?? sp?.part ?? '';
+    const itemSku = sp => sp?.part_number ?? sp?.partNumber ?? sp?.sku ?? sp?.no_part ?? '';
+    const samePart = (a, b, index) => {
+        const aid = itemId(a), bid = itemId(b);
+        if (aid != null && bid != null && String(aid) === String(bid)) return true;
+        const aSeq = a?.sequence ?? a?.estimate_sparepart_sequence;
+        const bSeq = b?.sequence ?? b?.estimate_sparepart_sequence;
+        if (aSeq != null && bSeq != null && String(aSeq) === String(bSeq)) return true;
+        if (norm(itemSku(a)) && norm(itemSku(a)) === norm(itemSku(b))) return true;
+        if (norm(itemName(a)) && norm(itemName(a)) === norm(itemName(b)) &&
+            Number(a?.item_index ?? a?.itemIndex ?? index) === Number(b?.item_index ?? b?.itemIndex ?? index)) return true;
+        return false;
+    };
+
     body.innerHTML = s.list.length ? s.list.map((sp, index) => {
         const returned = !!sp?.returned;
         const arrived = !returned && !!sp?.arrived;
-        const name = sp?.part_name ?? sp?.partName ?? sp?.name ?? "-";
-        const type = sp?.supply_bengkel ?? sp?.supplyBengkel ?? sp?.supply ?? "BENGKEL";
-        const qty = sp?.quantity ?? sp?.qty ?? "-";
-        const date = !returned && sp?.arrival_date ? formatDateOnly(sp.arrival_date) : "-";
-        const supplier = sp?.supplier || "-";
+        const name = itemName(sp) || '-';
+        const type = String(sp?.supply_bengkel ?? sp?.supplyBengkel ?? sp?.supply ?? 'BENGKEL').toUpperCase();
+        const isSupply = type.includes('SUPPLY');
+        const qty = sp?.quantity ?? sp?.qty ?? '-';
+        const date = !returned && sp?.arrival_date ? formatDateOnly(sp.arrival_date) : '-';
+        const supplier = sp?.supplier || '-';
         const note = returned
-            ? `RETURN${sp?.return_reason ? `: ${sp.return_reason}` : ""}`
-            : (sp?.note || "-");
-        const photoKey = sp?.photo_key || receiptPhotoKeys[String(sp?.id ?? sp?.estimate_sparepart_id ?? sp?.item_id ?? index)];
+            ? `RETURN${sp?.return_reason ? `: ${sp.return_reason}` : ''}`
+            : (sp?.note || sp?.arrival_note || '-');
+
+        // Foto dicari berdasarkan item transaksi yang benar, bukan posisi baris semata.
+        // photo_key yang tersimpan pada transaksi menjadi sumber utama, termasuk siklus penerimaan ulang.
+        let sourceRecord = null;
+        if (isSupply) {
+            sourceRecord = supplyArrivals.find(entry => samePart(sp, entry, index)) ||
+                supplyArrivals.find(entry => Number(entry?.item_index ?? entry?.itemIndex) === index) || null;
+        } else {
+            sourceRecord = poItems.find(entry => samePart(sp, entry, index)) ||
+                poItems.find(entry => Number(entry?.estimate_sparepart_sequence) === Number(sp?.sequence)) || null;
+        }
+        let photoKey = sp?.photo_key || sourceRecord?.photo_key || '';
+        if (!photoKey) {
+            const id = itemId(sp) ?? sourceRecord?.item_id ?? sourceRecord?.estimate_sparepart_id ?? sp?.sequence ?? index;
+            const history = sourceRecord?.return_history ?? sourceRecord?.replacement_history ?? sp?.return_history ?? sp?.replacement_history;
+            const cycle = 1 + (Array.isArray(history) ? history.length : 0);
+            photoKey = `${isSupply ? 'supply' : 'bengkel'}:${wid}:${id}:cycle${cycle}`;
+        }
+        const photoPrefix = photoKey.replace(/cycle\d+$/, '');
         return `<tr>
             <td>${index + 1}</td>
-            <td><strong>${escapeHTML(name)}</strong><br><small>${escapeHTML(sp?.part_number ?? "-")}</small></td>
+            <td><strong>${escapeHTML(name)}</strong><br><small>${escapeHTML(itemSku(sp) || '-')}</small></td>
             <td>${escapeHTML(type)}</td>
             <td>${escapeHTML(qty)}</td>
             <td>${returned ? `<span style="display:inline-block;padding:3px 8px;border-radius:999px;background:#fee2e2;color:#b91c1c;font-weight:700;font-size:11px">RETURN</span>` : (arrived ? `<span class="wo-arrival-done">SUDAH DATANG</span>` : `<span class="wo-arrival-pending">BELUM DATANG</span>`)}</td>
             <td>${escapeHTML(date)}</td>
             <td>${escapeHTML(supplier)}</td>
             <td>${escapeHTML(note)}</td>
-            <td>${photoKey ? `<button type="button" class="btn-secondary btn-small" onclick="MyWorkshopReceiptPhotos.openHistory('${escapeHTML(photoKey.replace(/cycle\d+$/, ""))}','Riwayat Foto ${escapeHTML(name)}')">📷 Lihat / Download Foto</button>` : '-'}</td>
+            <td><button type="button" class="btn-secondary btn-small" onclick="MyWorkshopReceiptPhotos.openHistory('${escapeHTML(photoPrefix)}','Riwayat Foto ${escapeHTML(name)}')">📷 Lihat / Download Foto</button></td>
         </tr>`;
-    }).join("") : `<tr><td colspan="8" class="wo-empty">Tidak ada data sparepart.</td></tr>`;
+    }).join('') : `<tr><td colspan="9" class="wo-empty">Tidak ada data sparepart.</td></tr>`;
 
     modal.classList.add("show");
 }

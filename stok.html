@@ -10,6 +10,13 @@
 </style>
     <link rel="icon" type="image/png" href="favicon.png">
 
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 <body>
 <div class="app">
@@ -24,5 +31,6 @@
 <div class="stock-modal" id="stockModal"><div class="stock-box"><div class="stock-head"><h2 id="stockModalTitle">Barang Masuk</h2><button class="stock-close" type="button" id="btnCloseStock">×</button></div><form id="stockForm"><div class="stock-grid"><div class="stock-group"><label for="stockDate">Tanggal *</label><input id="stockDate" type="date" required></div><div class="stock-group"><label for="stockPartNumber">Kode Sparepart *</label><input id="stockPartNumber" list="stockPartOptions" required placeholder="Kode sparepart"><datalist id="stockPartOptions"></datalist><div class="stock-current" id="stockCurrentInfo">-</div></div><div class="stock-group"><label for="stockPartName">Nama Sparepart *</label><input id="stockPartName" required placeholder="Nama sparepart"></div><div class="stock-group"><label for="stockQty">Jumlah *</label><input id="stockQty" type="number" min="0.01" step="0.01" required></div><div class="stock-group"><label for="stockUnit">Satuan</label><input id="stockUnit" value="PCS"></div><div class="stock-group"><label for="stockPurchasePrice">Harga Beli</label><input id="stockPurchasePrice" type="number" min="0" step="0.01" value="0"></div><div class="stock-group"><label for="stockSupplier">Supplier</label><input id="stockSupplier" placeholder="Nama supplier"></div><div class="stock-group"><label for="stockVehicleBrand">Peruntukan Merek Mobil</label><input id="stockVehicleBrand" placeholder="Contoh: Toyota"></div><div class="stock-group"><label for="stockVehicleType">Peruntukan Jenis Mobil</label><input id="stockVehicleType" placeholder="Contoh: Avanza"></div><div class="stock-group"><label for="stockVehicleYear">Peruntukan Tahun Mobil</label><input id="stockVehicleYear" type="text" inputmode="numeric" placeholder="Contoh: 2020"></div><div class="stock-group" id="stockReferenceGroup"><label for="stockReference">Referensi</label><input id="stockReference" placeholder="Masukan No. WO"></div><div class="stock-group full"><label for="stockNotes">Keterangan</label><textarea id="stockNotes" placeholder="Keterangan transaksi..."></textarea></div></div><div class="stock-modal-actions"><button type="button" class="btn-secondary" id="btnCancelStock">Batal</button><button type="submit" class="btn-primary" id="btnSaveStock">Simpan Barang Masuk</button></div></form></div></div>
 <script src="layout.js"></script>
 <script src="stok.js"></script>
+<script src="button-symbols.js"></script>
 </body>
 </html>

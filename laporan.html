@@ -17,6 +17,13 @@
 </style>
     <link rel="icon" type="image/png" href="favicon.png">
 
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 <body>
 <div class="app">
@@ -53,4 +60,5 @@
 </section></main></div>
 <script src="layout.js"></script>
 <script src="laporan.js"></script>
+<script src="button-symbols.js"></script>
 </body></html>

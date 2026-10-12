@@ -10,6 +10,13 @@
 </style>
     <link rel="icon" type="image/png" href="favicon.png">
 
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 <body>
 <div class="app">
@@ -23,5 +30,6 @@
 <div class="payment-modal" id="paymentModal"><div class="payment-box"><div class="payment-head"><h2>Pembayaran</h2><button class="payment-close" type="button" onclick="closePaymentModal()">×</button></div><div class="payment-info"><div class="info-card"><div class="info-label">No. Kuitansi</div><div class="info-value" id="payKuitansi">-</div></div><div class="info-card"><div class="info-label">No. WO</div><div class="info-value" id="payWO">-</div></div><div class="info-card"><div class="info-label">No. Klaim</div><div class="info-value" id="payClaim">-</div></div><div class="info-card"><div class="info-label">Customer</div><div class="info-value" id="payCustomer">-</div></div><div class="info-card"><div class="info-label">Alias Asuransi</div><div class="info-value" id="payInsurerAlias">-</div></div><div class="info-card"><div class="info-label">Nilai Kuitansi</div><div class="info-value" id="payAmount">Rp 0</div></div></div><form id="paymentForm"><div class="payment-group"><label for="paidAt">Tanggal Bayar *</label><input id="paidAt" type="date" required></div><div class="payment-group"><label for="paymentDescription">Keterangan</label><textarea id="paymentDescription" placeholder="Isi keterangan pembayaran..."></textarea></div><div class="payment-actions-bottom"><button type="button" class="btn-secondary" onclick="closePaymentModal()">Batal</button><button type="submit" class="btn-primary">Simpan Pembayaran</button></div></form></div></div>
 <script src="layout.js"></script>
 <script src="pembayaran.js"></script>
+<script src="button-symbols.js"></script>
 </body>
 </html>

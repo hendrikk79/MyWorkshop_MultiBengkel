@@ -21,6 +21,13 @@
         @media (max-width:900px) { .mobil-masuk-form { grid-template-columns:repeat(2,minmax(0,1fr)); } }
         @media (max-width:560px) { .mobil-masuk-form { grid-template-columns:1fr; } }
     </style>
+
+    <style id="mwStartupVisibilityGuard">
+        html { background: #111827; }
+        html.mw-startup-pending body { background: #111827 !important; }
+        html.mw-startup-pending body > :not(#mwLoadingScreen) { visibility: hidden !important; }
+    </style>
+    <script>document.documentElement.classList.add("mw-startup-pending");</script>
 </head>
 <body>
 <div class="app">
@@ -112,5 +119,6 @@
 
 <script src="layout.js"></script>
 <script src="mobil-masuk.js"></script>
+<script src="button-symbols.js"></script>
 </body>
 </html>
